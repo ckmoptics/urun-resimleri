@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operasyon Yönetim Sistemi - CKM</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .hidden { display: none !important; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.5s ease-in; }
+        
+        /* Splash Screen Animasyonları */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        @keyframes fillBar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        .splash-exit {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+        .loading-bar-fill {
+            animation: fillBar 3.5s ease-in-out forwards;
+        }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .animate-pulse-fast { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .gramaj-input { width: 70px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; text-align: center; }
+        .gramaj-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-scroll table { min-width: 1300px; }
+        .op-input { width: 100%; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; }
+        .op-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .op-input.changed { border-color: #f59e0b; background-color: #fffbeb; }
+        @media (max-width: 640px) {
+            .mobile-btn { font-size: 11px; padding: 6px 8px; }
+            .mobile-header { flex-direction: column; align-items: stretch; }
+            .mobile-header > div { width: 100%; }
+            .mobile-header .flex { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-2 md:p-4">
+
+    <!-- ============ SPLASH SCREEN ============ -->
+<div id="splashPage" class="page active fixed top-0 left-0 right-0 bottom-0 bg-black z-50 flex flex-col items-center justify-center">
+    <!-- Tüm İçerik Ortada -->
+    <div class="flex flex-col items-center justify-center">
+        <!-- Logo -->
+        <div class="mb-8">
+            <img src="https://raw.githubusercontent.com/ckmoptics/ekran/main/splash-omer.png" 
+                 alt="Created by Omer" 
+                 class="max-w-xs md:max-w-md animate-pulse">
+        </div>
+        
+        <!-- Yükleme Barı -->
+        <div class="w-64 md:w-80 h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
+            <div class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 loading-bar-fill rounded-full"></div>
+        </div>
+        
+        <!-- Yükleme Yazısı -->
+        <p class="text-gray-400 text-sm animate-pulse">Yükleniyor...</p>
+    </div>
+</div>
+
+    <!-- ============ LOGIN ============ -->
+    <div id="loginPage" class="page">
+        <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md mt-10">
+            <!-- CKM Logo -->
+            <div class="text-center mb-6">
+                <img src="https://raw.githubusercontent.com/ckmoptics/ekran/main/logo-ckm.png" 
+                     alt="CKM Logo" 
+                     class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h2 class="text-2xl font-bold text-center text-gray-800">Operasyon Yönetim Sistemi</h2>
+                <p class="text-xs text-gray-500 mt-1">CKM PLASTİK ve METAL KALIP DIŞ. TİC. SAN. LTD. ŞTİ.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                    <input type="text" id="username" class="w-full mt-1 p-2 border rounded-md outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Şifre</label>
+                    <input type="password" id="password" class="w-full mt-1 p-2 border rounded-md outline-none focus:border-blue-500">
+                </div>
+                <button onclick="window.login()" class="w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700">Giriş Yap</button>
+            </div>
+            
+            <!-- Alt Bilgi -->
+            <div class="mt-6 text-center">
+                <p class="text-[10px] text-gray-400">© 2026 CKM Kalıp | Operasyon Yönetim Sistemi v1.0 Created by ÖMER</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ OPERATÖR: AKTİF İŞLER ============ -->
+    <div id="opActivePage" class="page">
+        <div class="max-w-[95rem] mx-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-xl shadow-sm mb-4 gap-3 mobile-header">
+                <div>
+                    <span class="text-gray-500 text-sm">Hoş geldiniz,</span>
+                    <h1 id="opNameDisplay" class="text-xl font-bold text-gray-800"></h1>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="window.showPage('opFormPage')" class="mobile-btn bg-green-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-green-700">➕ Yeni İş</button>
+                    <button onclick="window.showPage('opCompletedPage')" class="mobile-btn bg-blue-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700">✅ Biten İşler</button>
+                    <button onclick="window.showPage('opPasswordPage')" class="mobile-btn bg-purple-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700">🔑 Şifre</button>
+                    <button onclick="window.logout()" class="mobile-btn bg-red-50 text-red-600 px-3 py-2 rounded-lg font-semibold text-sm hover:bg-red-100">Çıkış</button>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">🟢 Aktif Üretim İşleri</h3>
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase border-b border-gray-200">
+                                <th class="p-2">Eleman</th>
+                                <th class="p-2">Makine</th>
+                                <th class="p-2 text-center">Resim</th>
+                                <th class="p-2">Ürün Kodu</th>
+                                <th class="p-2">Ürün Adı</th>
+                                <th class="p-2 text-center">Çevrim (sn)</th>
+                                <th class="p-2 text-center">Göz</th>
+                                <th class="p-2 text-center">Toplam Baskı</th>
+                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center text-purple-700">Toplam Ürün</th>
+                                <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
+                                <th class="p-2">Başlangıç</th>
+                                <th class="p-2 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opActiveTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ OPERATÖR: YENİ İŞ FORMU ============ -->
+    <div id="opFormPage" class="page">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('opActivePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">Yeni Üretim Kaydı</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                <div id="opAutoProductCard" class="hidden flex items-center gap-4 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <img id="opAutoProductImg" src="" class="w-16 h-16 object-cover rounded-md border bg-white">
+                    <div class="flex-1">
+                        <h4 id="opAutoProductName" class="text-sm font-bold text-blue-900"></h4>
+                        <p id="opAutoProductCode" class="text-xs text-blue-700 font-mono"></p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Makine</label>
+                        <select id="opMakine" class="w-full mt-1 p-2 border rounded-md text-sm bg-white"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Ürün Kodu</label>
+                        <input type="text" id="opUrunKodu" oninput="window.urunKoduDegisti(this)" class="w-full mt-1 p-2 border rounded-md text-sm font-bold" placeholder="Örn: GY010">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Renk</label>
+                        <select id="opRenk" class="w-full mt-1 p-2 border rounded-md text-sm bg-white">
+                            <option value="Belirtilmedi">Seçiniz...</option>
+                            <option value="Beyaz">Beyaz</option>
+                            <option value="Siyah">Siyah</option>
+                            <option value="Naturel">Naturel</option>
+                            <option value="Antrasit">Antrasit</option>
+                            <option value="Şeffaf">Şeffaf</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Çevrim (sn)</label>
+                        <input type="number" id="opBaskiSuresi" class="w-full mt-1 p-2 border rounded-md text-sm" placeholder="25">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Göz Sayısı</label>
+                        <input type="number" id="opGozSayisi" oninput="window.toplamUrunHesapla()" class="w-full mt-1 p-2 border rounded-md text-sm" placeholder="4">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Toplam Baskı</label>
+                        <input type="number" id="opToplamBaski" oninput="window.toplamUrunHesapla()" class="w-full mt-1 p-2 border rounded-md text-sm" placeholder="1000">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Başlangıç</label>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="window.setSimdi('opBaslangic')" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 rounded-md text-xs font-bold">Şimdi</button>
+                            <input type="datetime-local" id="opBaslangic" class="flex-1 p-2 border rounded-md text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600">Bitiş (Opsiyonel)</label>
+                        <input type="datetime-local" id="opBitis" class="w-full mt-1 p-2 border rounded-md text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">Toplam Ürün</label>
+                        <div id="opLblToplamUrun" class="w-full mt-1 p-2 bg-gray-100 border rounded-md text-sm font-bold h-9 flex items-center">0 Adet</div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600">Not (Opsiyonel)</label>
+                    <textarea id="opIlkAciklama" class="w-full mt-1 p-2 border rounded-md text-sm" rows="2"></textarea>
+                </div>
+                <button onclick="window.kaydet()" class="w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700">💾 Kaydet ve Aktif İşlere Dön</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ OPERATÖR: BİTEN İŞLER ============ -->
+    <div id="opCompletedPage" class="page">
+        <div class="max-w-[95rem] mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('opActivePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">✅ Biten İşler</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase border-b border-gray-200">
+                                <th class="p-2">Eleman</th>
+                                <th class="p-2">Makine</th>
+                                <th class="p-2">Ürün Kodu</th>
+                                <th class="p-2">Ürün Adı</th>
+                                <th class="p-2 text-center">Toplam Baskı</th>
+                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
+                                <th class="p-2">Başlangıç</th>
+                                <th class="p-2">Bitiş</th>
+                                <th class="p-2">Net Çalışma</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opCompletedTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ OPERATÖR: ŞİFRE DEĞİŞTİR ============ -->
+    <div id="opPasswordPage" class="page">
+        <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('opActivePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">🔑 Şifre Değiştir</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Yeni Şifre (En az 4 karakter)</label>
+                    <input type="password" id="opNewPass" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Yeni Şifre (Tekrar)</label>
+                    <input type="password" id="opNewPassConfirm" class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <button onclick="window.changePassword()" class="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700">💾 Şifreyi Değiştir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MASTER: ANA SAYFA ============ -->
+    <div id="masterHomePage" class="page">
+        <div class="max-w-[95rem] mx-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-xl shadow-sm mb-4 gap-3 mobile-header">
+                <div>
+                    <span class="text-gray-500 text-sm">Hoş geldiniz,</span>
+                    <h1 id="masterNameDisplay" class="text-xl font-bold text-gray-800"></h1>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="window.showPage('masterOperatorsPage')" class="mobile-btn bg-blue-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700">👤 Operatörler</button>
+                    <button onclick="window.showPage('masterMachinesPage')" class="mobile-btn bg-teal-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-teal-700">⚙️ Makineler</button>
+                    <button onclick="window.showPage('masterCalendarPage')" class="mobile-btn bg-purple-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700">📅 Takvim</button>
+                    <button onclick="window.showPage('masterAddProductPage')" class="mobile-btn bg-green-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-green-700">📦 Yeni Ürün</button>
+                    <button onclick="window.logout()" class="mobile-btn bg-red-50 text-red-600 px-3 py-2 rounded-lg font-semibold text-sm hover:bg-red-100">Çıkış</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                <h3 class="text-sm font-bold text-gray-700 mb-2">🔍 Filtreler</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                    <input type="text" id="filterSearch" oninput="window.tabloyuYenile()" placeholder="Ara..." class="p-2 border rounded-md text-xs">
+                    <input type="text" id="filterEleman" oninput="window.tabloyuYenile()" placeholder="Eleman" class="p-2 border rounded-md text-xs">
+                    <select id="filterMakine" onchange="window.tabloyuYenile()" class="p-2 border rounded-md text-xs bg-white"></select>
+                    <input type="text" id="filterUrun" oninput="window.tabloyuYenile()" placeholder="Ürün" class="p-2 border rounded-md text-xs">
+                    <input type="date" id="filterTarih" onchange="window.tabloyuYenile()" class="p-2 border rounded-md text-xs">
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">📊 Tüm Üretim Kayıtları</h3>
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase border-b border-gray-200">
+                                <th class="p-2">Eleman</th>
+                                <th class="p-2">Makine</th>
+                                <th class="p-2 text-center">Resim</th>
+                                <th class="p-2">Ürün Kodu</th>
+                                <th class="p-2">Ürün Adı</th>
+                                <th class="p-2 text-center">Çevrim (sn)</th>
+                                <th class="p-2 text-center">Göz</th>
+                                <th class="p-2 text-center">Toplam Baskı</th>
+                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center text-purple-700">Toplam Ürün</th>
+                                <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
+                                <th class="p-2">Başlangıç</th>
+                                <th class="p-2">Bitiş</th>
+                                <th class="p-2">Net Çalışma</th>
+                                <th class="p-2">Teorik/Boşta</th>
+                                <th class="p-2">Açıklamalar</th>
+                                <th class="p-2 text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterMainTable" class="divide-y divide-gray-200"></tbody>
+                        <tfoot id="masterMainFooter" class="bg-gray-100 font-bold border-t-2 border-gray-300"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MASTER: OPERATÖR YÖNETİMİ ============ -->
+    <div id="masterOperatorsPage" class="page">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">👤 Operatör Yönetimi</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                    <h3 class="font-bold text-gray-700 mb-2 text-sm">➕ Yeni Operatör Ekle</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <input type="text" id="newOpName" placeholder="İsim" class="p-2 border rounded-md text-xs">
+                        <input type="text" id="newOpUser" placeholder="Kullanıcı Adı" class="p-2 border rounded-md text-xs">
+                        <input type="text" id="newOpPass" placeholder="Şifre" class="p-2 border rounded-md text-xs">
+                        <button onclick="window.operatorEkle()" class="bg-blue-600 text-white p-2 rounded-md text-xs font-bold hover:bg-blue-700">➕ Ekle</button>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs" style="min-width: 700px;">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 border-b">
+                                <th class="p-2">İsim</th>
+                                <th class="p-2">Kullanıcı Adı</th>
+                                <th class="p-2">Şifre</th>
+                                <th class="p-2">Rol</th>
+                                <th class="p-2 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="operatorListTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MASTER: MAKİNE YÖNETİMİ ============ -->
+    <div id="masterMachinesPage" class="page">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">⚙️ Makine Yönetimi</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Yeni Makine Ekle</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="text" id="newMachineCode" placeholder="Makine Kodu (örn: 250)" class="p-2 border rounded-md text-xs">
+                        <input type="text" id="newMachineName" placeholder="Makine Adı (örn: Makine 250)" class="p-2 border rounded-md text-xs">
+                        <button onclick="window.makineEkle()" class="bg-teal-600 text-white p-2 rounded-md text-xs font-bold hover:bg-teal-700">➕ Makine Ekle</button>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs" style="min-width: 400px;">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 border-b">
+                                <th class="p-2">Kod</th>
+                                <th class="p-2">Ad</th>
+                                <th class="p-2 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="machineListTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MASTER: TAKVİM ============ -->
+    <div id="masterCalendarPage" class="page">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">📅 Çalışma Takvimi</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                        <input type="date" id="newHolidayDate" class="p-2 border rounded-md text-sm bg-white flex-1">
+                        <button onclick="window.kuralEkle('tatil')" class="bg-red-500 text-white px-3 py-2 rounded-md text-xs font-semibold hover:bg-red-600">❌ Tatil</button>
+                        <button onclick="window.kuralEkle('calisma')" class="bg-green-600 text-white px-3 py-2 rounded-md text-xs font-semibold hover:bg-green-700">✅ Çalışma</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="text-xs font-bold text-red-600 mb-2">Tatil Günleri:</h4>
+                        <div id="holidayList" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-green-700 mb-2">Çalışma Günleri:</h4>
+                        <div id="workdayList" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MASTER: YENİ ÜRÜN ============ -->
+    <div id="masterAddProductPage" class="page">
+        <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">📦 Yeni Ürün</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Ürün Kodu</label>
+                    <input type="text" id="newProductCode" class="w-full mt-1 p-2 border rounded-md uppercase" placeholder="GY010">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Ürün Adı</label>
+                    <input type="text" id="newProductName" class="w-full mt-1 p-2 border rounded-md" placeholder="95*20 KARE SPOT BAŞLIK">
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p class="text-xs text-blue-700">
+                        <strong>📝 Bilgi:</strong> Resim için GitHub'a yükleyin:<br>
+                        <code class="bg-blue-100 px-1 rounded text-[10px]">[ÜRÜN_KODU].jpg</code>
+                    </p>
+                </div>
+                <button onclick="window.addNewProduct()" class="w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700">💾 Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ TRANSFER MODAL ============ -->
+    <div id="transferModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
+            <h4 class="font-bold text-gray-800">🔄 İş Aktar</h4>
+            <select id="transferSelect" class="w-full p-2 border rounded-lg bg-white text-sm"></select>
+            <div class="flex gap-2">
+                <button onclick="window.isAktarModalKapat()" class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-xs font-bold">İptal</button>
+                <button onclick="window.isAktarModalOnayla()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-xs font-bold">Aktar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-xl shadow-xl flex items-center gap-3">
+            <div class="loading-spinner"></div>
+            <span class="text-gray-700 font-medium">Yükleniyor...</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyCauhpJwdv51hV9qxOA3bxgDFA0dFl0acM",
+            authDomain: "operasyon-yonetimi.firebaseapp.com",
+            projectId: "operasyon-yonetimi",
+            storageBucket: "operasyon-yonetimi.firebasestorage.app",
+            messagingSenderId: "747654893159",
+            appId: "1:747654893159:web:83c3c0ca7423a54e50cec2"
+        });
+        const db = firebase.firestore();
+
+        let USERS = {};
+        let MAKINALAR = [];
+        let TATIL_GUNLERI = []; 
+        let MESAI_GUNLERI = []; 
+        let dbMock = []; 
+        let currentUser = null;
+        let editModeId = null; 
+        let activeTransferId = null;
+        let dataLoaded = false;
+        let opOriginalValues = {};
+
+        const GITHUB_REPO = { owner: "ckmoptics", repo: "urun-resimleri", branch: "main" };
+
+        // ========== SAYFA YÖNLENDİRME ==========
+        window.showPage = function(pageId) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+                if (p.id === 'splashPage') return;
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            if (pageId === 'opActivePage') window.loadOpActiveJobs();
+            if (pageId === 'opCompletedPage') window.loadOpCompletedJobs();
+            if (pageId === 'opFormPage') window.populateMachineSelect('opMakine');
+            if (pageId === 'masterHomePage') {
+                window.populateMachineSelect('filterMakine', true);
+                window.tabloyuYenile();
+            }
+            if (pageId === 'masterOperatorsPage') window.operatorTablosunuYenile();
+            if (pageId === 'masterMachinesPage') window.makineTablosunuYenile();
+            if (pageId === 'masterCalendarPage') window.takvimListeleriniYenile();
+        }
+
+        // ========== SPLASH SCREEN GEÇİŞİ ==========
+        window.addEventListener('load', async function() {
+            await verileriYukle();
+            
+            setTimeout(function() {
+                const splash = document.getElementById('splashPage');
+                splash.classList.add('splash-exit');
+                
+                setTimeout(function() {
+                    splash.classList.add('hidden');
+                    splash.classList.remove('active', 'splash-exit');
+                    document.getElementById('loginPage').classList.add('active');
+                }, 500);
+            }, 4000);
+        });
+
+        // ========== FIREBASE ==========
+        async function firebaseKaydet(koleksiyon, id, veri) {
+            try { await db.collection(koleksiyon).doc(id).set(veri); return true; }
+            catch (e) { console.error(e); return false; }
+        }
+        async function firebaseGuncelle(koleksiyon, id, veri) {
+            try { await db.collection(koleksiyon).doc(id).update(veri); return true; }
+            catch (e) { console.error(e); return false; }
+        }
+        async function firebaseSil(koleksiyon, id) {
+            try { await db.collection(koleksiyon).doc(id).delete(); return true; }
+            catch (e) { console.error(e); return false; }
+        }
+
+        function showLoading(show) {
+            document.getElementById("loadingOverlay").classList.toggle("hidden", !show);
+        }
+
+        async function verileriYukle() {
+            showLoading(true);
+            try {
+                const usersSnap = await db.collection("kullanicilar").get();
+                USERS = {};
+                usersSnap.forEach(d => { USERS[d.id] = d.data(); });
+                
+                if (!USERS["admin"]) {
+                    USERS["admin"] = { pass: "9999", role: "admin", name: "Yönetici (Admin)" };
+                    await firebaseKaydet("kullanicilar", "admin", USERS["admin"]);
+                }
+
+                if (USERS["master"]) {
+                    await firebaseSil("kullanicilar", "master");
+                    delete USERS["master"];
+                }
+
+                const makinaSnap = await db.collection("makinalar").get();
+                MAKINALAR = [];
+                makinaSnap.forEach(d => { 
+                    MAKINALAR.push({ kod: d.id, ...d.data() }); 
+                });
+                if (MAKINALAR.length === 0) {
+                    const defaults = [
+                        { kod: "120", ad: "Makine 120" },
+                        { kod: "180", ad: "Makine 180" },
+                        { kod: "220", ad: "Makine 220" }
+                    ];
+                    for (const m of defaults) {
+                        await firebaseKaydet("makinalar", m.kod, m);
+                        MAKINALAR.push(m);
+                    }
+                }
+                MAKINALAR.sort((a, b) => parseInt(a.kod) - parseInt(b.kod));
+
+                const tatilSnap = await db.collection("tatil_gunleri").get();
+                TATIL_GUNLERI = [];
+                tatilSnap.forEach(d => { TATIL_GUNLERI.push(d.id); });
+
+                const mesaiSnap = await db.collection("mesai_gunleri").get();
+                MESAI_GUNLERI = [];
+                mesaiSnap.forEach(d => { MESAI_GUNLERI.push(d.id); });
+
+                const uretimSnap = await db.collection("uretim_kayitlari").get();
+                dbMock = [];
+                uretimSnap.forEach(d => { dbMock.push({ id: d.id, ...d.data() }); });
+
+                dataLoaded = true;
+            } catch (e) { console.error("Veri yükleme hatası:", e); }
+            finally { showLoading(false); }
+        }
+
+        async function urunBilgisiGetir(urunKodu) {
+            try {
+                const snap = await db.collection("urunler").doc(urunKodu).get();
+                if (snap.exists) {
+                    const d = snap.data();
+                    return { urunKodu, urunAdi: d.ad || d.urunAdi || d.reklam || "İsimsiz" };
+                }
+                return null;
+            } catch (e) { return null; }
+        }
+
+        function githubResimUrl(kod) {
+            return `https://raw.githubusercontent.com/${GITHUB_REPO.owner}/${GITHUB_REPO.repo}/${GITHUB_REPO.branch}/${kod}.jpg`;
+        }
+
+        function gramajFormatla(gram) {
+            if (!gram || gram <= 0) return "0 gr";
+            if (gram < 1000) return gram.toFixed(2).replace(/\.?0+$/, '') + " gr";
+            const kg = Math.floor(gram / 1000);
+            const gr = gram % 1000;
+            if (gr === 0) return kg + " kg";
+            return kg + " kg " + gr.toFixed(2).replace(/\.?0+$/, '') + " gr";
+        }
+
+        function netCalismaSuresiHesapla(startStr, endStr) {
+            if (!endStr) return 0;
+            let start = new Date(startStr), end = new Date(endStr);
+            if (end <= start) return 0;
+            let toplam = 0, current = new Date(start.getTime());
+            while (current < end) {
+                let gun = current.getDay(), saat = current.getHours();
+                let tarihStr = `${current.getFullYear()}-${String(current.getMonth()+1).padStart(2,'0')}-${String(current.getDate()).padStart(2,'0')}`;
+                if (saat >= 9 && saat < 19) {
+                    if (MESAI_GUNLERI.includes(tarihStr)) toplam++;
+                    else if (gun !== 0 && gun !== 6 && !TATIL_GUNLERI.includes(tarihStr)) toplam++;
+                }
+                current.setMinutes(current.getMinutes() + 1);
+            }
+            return toplam;
+        }
+
+        function formatDakikaSaat(topDk) {
+            if(topDk <= 0 || isNaN(topDk)) return "00:00";
+            return `${Math.floor(topDk/60).toString().padStart(2,'0')}:${(topDk%60).toString().padStart(2,'0')}`;
+        }
+
+        function gramajYetkisiVar(kayit) {
+            if (!currentUser) return false;
+            if (currentUser.role === "admin") return true;
+            if (!kayit.baskiGramaji || kayit.baskiGramaji <= 0) {
+                if (kayit.suAnkiSorumlu === currentUser.username || kayit.username === currentUser.username) return true;
+            }
+            return false;
+        }
+
+        function duzenlemeYetkisiVar(kayit) {
+            if (!currentUser) return false;
+            if (currentUser.role === "admin") return true;
+            if (!kayit.rawBitis && kayit.suAnkiSorumlu === currentUser.username) return true;
+            return false;
+        }
+
+        window.populateMachineSelect = function(selectId, withAllOption = false) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            select.innerHTML = "";
+            if (withAllOption) {
+                const allOpt = document.createElement("option");
+                allOpt.value = "";
+                allOpt.innerText = "Tüm Makineler";
+                select.appendChild(allOpt);
+            }
+            MAKINALAR.forEach(m => {
+                const opt = document.createElement("option");
+                opt.value = m.kod;
+                opt.innerText = m.ad;
+                select.appendChild(opt);
+            });
+        }
+
+        window.login = async function() {
+            const user = document.getElementById("username").value.trim();
+            const pass = document.getElementById("password").value.trim();
+            if (!dataLoaded) await verileriYukle();
+
+            if (USERS[user] && USERS[user].pass === pass) {
+                currentUser = { username: user, ...USERS[user] };
+                if (currentUser.role === "admin") {
+                    document.getElementById("masterNameDisplay").innerText = currentUser.name;
+                    window.showPage('masterHomePage');
+                } else {
+                    document.getElementById("opNameDisplay").innerText = currentUser.name;
+                    window.showPage('opActivePage');
+                }
+            } else {
+                alert("Hatalı kullanıcı adı veya şifre!");
+            }
+        }
+
+        window.logout = function() {
+            currentUser = null;
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            window.showPage('loginPage');
+        }
+
+        window.loadOpActiveJobs = function() {
+            const tbody = document.getElementById("opActiveTable");
+            tbody.innerHTML = "";
+            const isler = dbMock.filter(k => 
+                !k.rawBitis && (k.username === currentUser.username || k.suAnkiSorumlu === currentUser.username)
+            );
+            if (isler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" class="p-6 text-center text-gray-500">Aktif iş yok. "Yeni İş" butonuna basarak başlayın.</td></tr>`;
+                return;
+            }
+            isler.forEach(kayit => {
+                const resimUrl = githubResimUrl(kayit.urunKodu);
+                const toplamGramaj = (kayit.baskiGramaji || 0) * (kayit.toplamBaski || 0);
+                const gramajYetki = gramajYetkisiVar(kayit);
+                const gramajGirilmemis = !kayit.baskiGramaji || kayit.baskiGramaji <= 0;
+                
+                let gramajHucresi = "";
+                if (gramajGirilmemis && gramajYetki) {
+                    gramajHucresi = `<td class="p-2 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <input type="number" id="gramaj-input-${kayit.id}" class="gramaj-input" step="0.01" placeholder="gr">
+                            <button onclick="window.gramajKaydet('${kayit.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-[10px] font-bold">💾</button>
+                        </div>
+                    </td>`;
+                } else if (kayit.baskiGramaji > 0) {
+                    gramajHucresi = `<td class="p-2 text-center font-medium text-gray-700">${kayit.baskiGramaji} gr</td>`;
+                } else {
+                    gramajHucresi = `<td class="p-2 text-center text-gray-400 italic">-</td>`;
+                }
+
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-2 font-semibold text-gray-700">${kayit.ekleyen}</td>
+                    <td class="p-2"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-bold text-[10px]">M-${kayit.makine}</span></td>
+                    <td class="p-1 text-center"><img src="${resimUrl}" class="w-10 h-10 object-cover rounded border bg-white mx-auto" onerror="this.style.display='none'"></td>
+                    <td class="p-2 font-bold text-gray-900">${kayit.urunKodu}</td>
+                    <td class="p-2 text-gray-600">${kayit.urunAdi}</td>
+                    <td class="p-2 text-center">${kayit.baskiSuresi} sn</td>
+                    <td class="p-2 text-center">${kayit.gozSayisi}</td>
+                    <td class="p-2 text-center font-mono">${kayit.toplamBaski.toLocaleString('tr-TR')}</td>
+                    ${gramajHucresi}
+                    <td class="p-2 text-center font-bold text-purple-700">${kayit.toplamUrunSayisi.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-center font-bold text-orange-700">${gramajFormatla(toplamGramaj)}</td>
+                    <td class="p-2 text-[10px]">${kayit.baslangic}</td>
+                    <td class="p-2 text-center">
+                        <button onclick="window.uretimiBitir('${kayit.id}')" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-green-700">✅ Bitir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.gramajKaydet = async function(kayitId) {
+            const input = document.getElementById("gramaj-input-" + kayitId);
+            if (!input) return;
+            const yeniGramaj = parseFloat(input.value);
+            if (isNaN(yeniGramaj) || yeniGramaj <= 0) { alert("Geçerli gramaj girin!"); return; }
+            const kayit = dbMock.find(x => String(x.id) === String(kayitId));
+            if (!kayit) return;
+            kayit.baskiGramaji = yeniGramaj;
+            kayit.toplamGramaj = yeniGramaj * kayit.toplamBaski;
+            await firebaseGuncelle("uretim_kayitlari", kayitId, {
+                baskiGramaji: yeniGramaj, toplamGramaj: kayit.toplamGramaj
+            });
+            if (!kayit.aciklamalar) kayit.aciklamalar = [];
+            const ts = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+            kayit.aciklamalar.push(`[Gramaj - ${ts}] ${currentUser.name}: ${yeniGramaj} gr`);
+            await firebaseGuncelle("uretim_kayitlari", kayitId, { aciklamalar: kayit.aciklamalar });
+            alert("✅ Gramaj: " + gramajFormatla(kayit.toplamGramaj));
+            window.loadOpActiveJobs();
+        }
+
+        window.uretimiBitir = async function(id) {
+            const kayit = dbMock.find(x => String(x.id) === String(id));
+            if (!kayit) return;
+            if (!kayit.baskiGramaji || kayit.baskiGramaji <= 0) {
+                alert("⛔ Gramaj girilmeden iş bitirilemez!\n\nÖnce tablodan gramaj bilgisini giriniz.");
+                return;
+            }
+            if (!confirm("Bu işi bitirmek istediğinize emin misiniz?")) return;
+            const simdi = new Date();
+            const tzoffset = simdi.getTimezoneOffset() * 60000; 
+            const yerelZamanStr = (new Date(simdi.getTime() - tzoffset)).toISOString().slice(0, 16);
+            kayit.rawBitis = yerelZamanStr;
+            kayit.bitis = simdi.toLocaleString('tr-TR');
+            kayit.aciklamalar.push(`[İş Bitirildi] ${currentUser.name} tarafından.`);
+            const netMesai = netCalismaSuresiHesapla(kayit.rawBaslangic, kayit.rawBitis);
+            const teorik = Math.round((kayit.toplamBaski * kayit.baskiSuresi) / 60);
+            const bosta = netMesai - teorik;
+            await firebaseGuncelle("uretim_kayitlari", id, {
+                rawBitis: yerelZamanStr, bitis: kayit.bitis,
+                aciklamalar: kayit.aciklamalar,
+                netCalismaDk: netMesai, teorikSureDk: teorik,
+                bostaZamanDk: bosta > 0 ? bosta : 0
+            });
+            alert("✅ İş bitirildi!");
+            if (document.getElementById('opActivePage').classList.contains('active')) {
+                window.loadOpActiveJobs();
+            } else if (document.getElementById('masterHomePage').classList.contains('active')) {
+                window.tabloyuYenile();
+            }
+        }
+
+        window.loadOpCompletedJobs = function() {
+            const tbody = document.getElementById("opCompletedTable");
+            tbody.innerHTML = "";
+            const isler = dbMock.filter(k => 
+                k.rawBitis && (k.username === currentUser.username || k.bitirenOperatör === currentUser.name)
+            );
+            if (isler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-gray-500">Henüz biten iş yok.</td></tr>`;
+                return;
+            }
+            isler.forEach(kayit => {
+                const toplamGramaj = (kayit.baskiGramaji || 0) * kayit.toplamBaski;
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-2 font-semibold">${kayit.ekleyen}</td>
+                    <td class="p-2"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono text-[10px]">M-${kayit.makine}</span></td>
+                    <td class="p-2 font-bold">${kayit.urunKodu}</td>
+                    <td class="p-2">${kayit.urunAdi}</td>
+                    <td class="p-2 text-center font-mono">${kayit.toplamBaski.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-center">${kayit.baskiGramaji || 0} gr</td>
+                    <td class="p-2 text-center font-bold text-orange-700">${gramajFormatla(toplamGramaj)}</td>
+                    <td class="p-2 text-[10px]">${kayit.baslangic}</td>
+                    <td class="p-2 text-[10px]">${kayit.bitis}</td>
+                    <td class="p-2 text-xs font-bold text-green-700">${formatDakikaSaat(kayit.netCalismaDk || 0)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.changePassword = async function() {
+            const newPass = document.getElementById("opNewPass").value;
+            const confirmPass = document.getElementById("opNewPassConfirm").value;
+            if (newPass.length < 4) { alert("Şifre en az 4 karakter olmalı!"); return; }
+            if (newPass !== confirmPass) { alert("Şifreler eşleşmiyor!"); return; }
+            await firebaseGuncelle("kullanicilar", currentUser.username, { pass: newPass });
+            USERS[currentUser.username].pass = newPass;
+            alert("✅ Şifre değiştirildi!");
+            document.getElementById("opNewPass").value = "";
+            document.getElementById("opNewPassConfirm").value = "";
+            window.showPage('opActivePage');
+        }
+
+        window.setSimdi = function(inputId) {
+            const simdi = new Date();
+            const tzoffset = simdi.getTimezoneOffset() * 60000; 
+            document.getElementById(inputId).value = (new Date(simdi.getTime() - tzoffset)).toISOString().slice(0, 16);
+        }
+
+        window.urunKoduDegisti = async function(input) {
+            input.value = input.value.toUpperCase(); 
+            const kod = input.value.trim();
+            const kart = document.getElementById("opAutoProductCard");
+            if (kod.length < 2) { kart.classList.add("hidden"); return; }
+            const urunBilgisi = await urunBilgisiGetir(kod);
+            if (urunBilgisi) {
+                document.getElementById("opAutoProductName").innerText = urunBilgisi.urunAdi;
+                document.getElementById("opAutoProductCode").innerText = kod;
+                const img = document.getElementById("opAutoProductImg");
+                img.src = githubResimUrl(kod);
+                kart.classList.remove("hidden");
+            } else {
+                kart.classList.add("hidden");
+            }
+        }
+
+        window.toplamUrunHesapla = function() {
+            const goz = parseInt(document.getElementById("opGozSayisi").value) || 0;
+            const baski = parseInt(document.getElementById("opToplamBaski").value) || 0;
+            document.getElementById("opLblToplamUrun").innerText = (goz * baski).toLocaleString('tr-TR') + " Adet";
+        }
+
+        window.kaydet = async function() {
+            const makine = document.getElementById("opMakine").value;
+            const urunKodu = document.getElementById("opUrunKodu").value.trim();
+            const renk = document.getElementById("opRenk").value;
+            const baskiSuresi = parseFloat(document.getElementById("opBaskiSuresi").value);
+            const gozSayisi = parseInt(document.getElementById("opGozSayisi").value);
+            const toplamBaski = parseInt(document.getElementById("opToplamBaski").value);
+            const baslangic = document.getElementById("opBaslangic").value;
+            const bitis = document.getElementById("opBitis").value;
+            const ilkAciklama = document.getElementById("opIlkAciklama").value.trim();
+
+            if (!urunKodu || !baskiSuresi || !gozSayisi || !toplamBaski || !baslangic) {
+                alert("Lütfen tüm zorunlu alanları doldurun!");
+                return;
+            }
+            const urunBilgisi = await urunBilgisiGetir(urunKodu);
+            const urunAdi = urunBilgisi ? urunBilgisi.urunAdi : "Manuel Tanımlı";
+            let netCalismaDk = 0, teorikSureDk = 0, bostaZamanDk = 0;
+            if (bitis) {
+                netCalismaDk = netCalismaSuresiHesapla(baslangic, bitis);
+                teorikSureDk = Math.round((toplamBaski * baskiSuresi) / 60);
+                const bosta = netCalismaDk - teorikSureDk;
+                bostaZamanDk = bosta > 0 ? bosta : 0;
+            }
+            const yeniKayit = {
+                ekleyen: currentUser.name, username: currentUser.username,
+                suAnkiSorumlu: currentUser.username, bitirenOperatör: "",
+                makine, urunKodu, urunAdi, urunResim: "", renk, baskiSuresi, gozSayisi, toplamBaski,
+                baskiGramaji: 0, toplamUrunSayisi: gozSayisi * toplamBaski, toplamGramaj: 0,
+                rawBaslangic: baslangic, rawBitis: bitis,
+                baslangic: new Date(baslangic).toLocaleString('tr-TR'),
+                bitis: bitis ? new Date(bitis).toLocaleString('tr-TR') : "",
+                netCalismaDk, teorikSureDk, bostaZamanDk,
+                aciklamalar: ilkAciklama ? [ilkAciklama] : [],
+                createdAt: new Date()
+            };
+            const docRef = await db.collection("uretim_kayitlari").add(yeniKayit);
+            dbMock.push({ id: docRef.id, ...yeniKayit });
+            alert("✅ İş kaydedildi!");
+            document.getElementById("opUrunKodu").value = "";
+            document.getElementById("opRenk").value = "Belirtilmedi";
+            document.getElementById("opBaskiSuresi").value = "";
+            document.getElementById("opGozSayisi").value = "";
+            document.getElementById("opToplamBaski").value = "";
+            document.getElementById("opBaslangic").value = "";
+            document.getElementById("opBitis").value = "";
+            document.getElementById("opIlkAciklama").value = "";
+            document.getElementById("opLblToplamUrun").innerText = "0 Adet";
+            document.getElementById("opAutoProductCard").classList.add("hidden");
+            window.showPage('opActivePage');
+        }
+
+        window.tabloyuYenile = function() {
+            const tbody = document.getElementById("masterMainTable");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            const fSearch = (document.getElementById("filterSearch")?.value || "").toLowerCase();
+            const fEleman = (document.getElementById("filterEleman")?.value || "").toLowerCase();
+            const fMakine = document.getElementById("filterMakine")?.value || "";
+            const fUrun = (document.getElementById("filterUrun")?.value || "").toLowerCase();
+            const fTarih = document.getElementById("filterTarih")?.value || "";
+
+            let filtreli = dbMock.filter(k => {
+                const matchSearch = !fSearch || `${k.urunKodu} ${k.urunAdi} ${k.ekleyen}`.toLowerCase().includes(fSearch);
+                const matchEleman = !fEleman || k.ekleyen.toLowerCase().includes(fEleman);
+                const matchMakine = !fMakine || k.makine === fMakine;
+                const matchUrun = !fUrun || `${k.urunKodu} ${k.urunAdi}`.toLowerCase().includes(fUrun);
+                const matchTarih = !fTarih || k.rawBaslangic.startsWith(fTarih);
+                return matchSearch && matchEleman && matchMakine && matchUrun && matchTarih;
+            });
+            filtreli.sort((a, b) => new Date(b.rawBaslangic) - new Date(a.rawBaslangic));
+
+            let toplamBaskiGenel = 0, toplamUrunGenel = 0, toplamNetCalismaDk = 0, toplamGramajGenel = 0;
+            filtreli.forEach(k => {
+                toplamBaskiGenel += k.toplamBaski || 0;
+                toplamUrunGenel += k.toplamUrunSayisi || 0;
+                toplamNetCalismaDk += k.netCalismaDk || 0;
+                const kg = (k.baskiGramaji || 0) * (k.toplamBaski || 0);
+                toplamGramajGenel += kg;
+                const resimUrl = githubResimUrl(k.urunKodu);
+                const gramajYetki = gramajYetkisiVar(k);
+                const gramajGirilmemis = !k.baskiGramaji || k.baskiGramaji <= 0;
+                let gramajHucresi = "";
+                if (gramajGirilmemis && gramajYetki) {
+                    gramajHucresi = `<td class="p-2 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <input type="number" id="gramaj-input-${k.id}" class="gramaj-input" step="0.01" placeholder="gr">
+                            <button onclick="window.gramajKaydetMaster('${k.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-[10px] font-bold">💾</button>
+                        </div>
+                    </td>`;
+                } else if (k.baskiGramaji > 0) {
+                    gramajHucresi = `<td class="p-2 text-center font-medium text-gray-700">${k.baskiGramaji} gr</td>`;
+                } else {
+                    gramajHucresi = `<td class="p-2 text-center text-gray-400 italic">-</td>`;
+                }
+                let bitisTd = "", netHucresi = "", bostaHucresi = "";
+                let aktarBtn = "";
+                if (k.rawBitis) {
+                    bitisTd = `<td class="p-2 text-[10px]">${k.bitis}</td>`;
+                    netHucresi = `<span class="font-bold text-green-700">${formatDakikaSaat(k.netCalismaDk || 0)}</span>`;
+                    bostaHucresi = `<span class="text-gray-500 text-[10px]">H: ${formatDakikaSaat(k.teorikSureDk || 0)}</span><br><span class="text-red-600 font-bold text-[10px]">B: ${formatDakikaSaat(k.bostaZamanDk || 0)}</span>`;
+                } else {
+                    bitisTd = `<td class="p-2"><span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-[10px] font-semibold animate-pulse-fast">🟢 Aktif</span></td>`;
+                    netHucresi = `<span class="text-gray-400 italic text-[10px]">-</span>`;
+                    bostaHucresi = `<span class="text-gray-400 italic text-[10px]">-</span>`;
+                    aktarBtn = `<button onclick="window.isAktarAyarla('${k.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold mb-1 w-full">🔄 Aktar</button>`;
+                }
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-2 font-semibold text-gray-700 text-[11px]">${k.ekleyen}</td>
+                    <td class="p-2"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-bold text-[10px]">M-${k.makine}</span></td>
+                    <td class="p-1 text-center"><img src="${resimUrl}" class="w-10 h-10 object-cover rounded border bg-white mx-auto" onerror="this.style.display='none'"></td>
+                    <td class="p-2 font-bold text-gray-900 text-[11px]">${k.urunKodu}</td>
+                    <td class="p-2 text-gray-600 text-[11px]">${k.urunAdi}</td>
+                    <td class="p-2 text-center text-[11px]">${k.baskiSuresi} sn</td>
+                    <td class="p-2 text-center text-[11px]">${k.gozSayisi}</td>
+                    <td class="p-2 text-center font-mono text-[11px]">${k.toplamBaski.toLocaleString('tr-TR')}</td>
+                    ${gramajHucresi}
+                    <td class="p-2 text-center font-bold text-purple-700 text-[11px]">${k.toplamUrunSayisi.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-center font-bold text-orange-700 text-[11px]">${gramajFormatla(kg)}</td>
+                    <td class="p-2 text-[10px]">${k.baslangic}</td>
+                    ${bitisTd}
+                    <td class="p-2 text-[11px]">${netHucresi}</td>
+                    <td class="p-2 text-[10px]">${bostaHucresi}</td>
+                    <td class="p-2 max-w-xs text-[10px]">${(k.aciklamalar || []).map(a => `<div class="bg-gray-50 p-1 rounded my-0.5 border-l-2 border-blue-500">• ${a}</div>`).join('')}
+                        <button onclick="window.aciklamaEkle('${k.id}')" class="mt-1 text-blue-500 hover:underline text-[10px]">+ Not</button>
+                    </td>
+                    <td class="p-2 text-center">
+                        <div class="flex flex-col gap-1">
+                            ${aktarBtn}
+                            <button onclick="window.kayitSil('${k.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold w-full">Sil</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            const tfoot = document.getElementById("masterMainFooter");
+            tfoot.innerHTML = `
+                <tr class="bg-gray-200 text-gray-800 font-bold">
+                    <td class="p-2" colspan="7">📊 Toplam (${filtreli.length} kayıt)</td>
+                    <td class="p-2 text-center font-mono">${toplamBaskiGenel.toLocaleString('tr-TR')}</td>
+                    <td></td>
+                    <td class="p-2 text-center font-mono text-purple-800">${toplamUrunGenel.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-center font-mono text-orange-800">${gramajFormatla(toplamGramajGenel)}</td>
+                    <td colspan="4"></td>
+                    <td class="p-2 text-xs text-green-800">${formatDakikaSaat(toplamNetCalismaDk)}</td>
+                    <td colspan="3"></td>
+                </tr>
+            `;
+        }
+
+        window.gramajKaydetMaster = async function(kayitId) {
+            await window.gramajKaydet(kayitId);
+            window.tabloyuYenile();
+        }
+
+        window.aciklamaEkle = async function(id) {
+            const yeniNot = prompt("Açıklama:");
+            if (!yeniNot || !yeniNot.trim()) return;
+            const kayit = dbMock.find(x => String(x.id) === String(id));
+            if (kayit) {
+                const ts = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+                kayit.aciklamalar.push(`[${ts}] ${yeniNot.trim()}`);
+                await firebaseGuncelle("uretim_kayitlari", id, { aciklamalar: kayit.aciklamalar });
+                window.tabloyuYenile();
+            }
+        }
+
+        window.kayitSil = async function(id) {
+            if (confirm("Bu kayıt silinsin mi?")) {
+                await firebaseSil("uretim_kayitlari", id);
+                dbMock = dbMock.filter(k => String(k.id) !== String(id));
+                window.tabloyuYenile();
+            }
+        }
+
+        window.isAktarAyarla = function(id) {
+            const kayit = dbMock.find(x => String(x.id) === String(id));
+            if (!kayit) return;
+            activeTransferId = id;
+            const selectEl = document.getElementById("transferSelect");
+            selectEl.innerHTML = ""; 
+            let count = 0;
+            Object.keys(USERS).forEach(u => {
+                if (USERS[u].role === "worker" && u !== kayit.suAnkiSorumlu) {
+                    const opt = document.createElement("option");
+                    opt.value = u;
+                    opt.innerText = USERS[u].name;
+                    selectEl.appendChild(opt);
+                    count++;
+                }
+            });
+            if (count === 0) { alert("Başka operatör yok!"); return; }
+            document.getElementById("transferModal").classList.remove("hidden");
+        }
+        window.isAktarModalKapat = function() {
+            document.getElementById("transferModal").classList.add("hidden");
+            activeTransferId = null;
+        }
+        window.isAktarModalOnayla = async function() {
+            if (!activeTransferId) return;
+            const kayit = dbMock.find(x => String(x.id) === String(activeTransferId));
+            const secilen = document.getElementById("transferSelect").value;
+            if (kayit && USERS[secilen]) {
+                kayit.suAnkiSorumlu = secilen;
+                const ts = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+                kayit.aciklamalar.push(`[İş Devri - ${ts}] ${USERS[secilen].name}'e devredildi.`);
+                await firebaseGuncelle("uretim_kayitlari", activeTransferId, {
+                    suAnkiSorumlu: secilen, aciklamalar: kayit.aciklamalar
+                });
+                alert(`İş ${USERS[secilen].name}'e aktarıldı.`);
+                window.isAktarModalKapat();
+                window.tabloyuYenile();
+            }
+        }
+
+        window.operatorEkle = async function() {
+            const name = document.getElementById("newOpName").value.trim();
+            const user = document.getElementById("newOpUser").value.trim();
+            const pass = document.getElementById("newOpPass").value.trim();
+            if (!name || !user || !pass) { alert("Tüm alanları doldurun!"); return; }
+            if (USERS[user]) { alert("Bu kullanıcı adı zaten var!"); return; }
+            if (user.length < 3) { alert("Kullanıcı adı en az 3 karakter olmalı!"); return; }
+            if (pass.length < 4) { alert("Şifre en az 4 karakter olmalı!"); return; }
+            USERS[user] = { pass, role: "worker", name };
+            await firebaseKaydet("kullanicilar", user, USERS[user]);
+            alert(`${name} eklendi.`);
+            document.getElementById("newOpName").value = "";
+            document.getElementById("newOpUser").value = "";
+            document.getElementById("newOpPass").value = "";
+            window.operatorTablosunuYenile();
+        }
+
+        window.operatorTablosunuYenile = function() {
+            const tbody = document.getElementById("operatorListTable");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            
+            const allUsers = Object.keys(USERS);
+            const adminUsers = allUsers.filter(u => USERS[u].role === "admin");
+            const workerUsers = allUsers.filter(u => USERS[u].role === "worker");
+            const sirali = [...adminUsers, ...workerUsers];
+            
+            if (sirali.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Kullanıcı yok.</td></tr>`;
+                return;
+            }
+            
+            sirali.forEach(username => {
+                const user = USERS[username];
+                const isAdmin = user.role === "admin";
+                
+                opOriginalValues[username] = {
+                    name: user.name,
+                    username: username,
+                    pass: user.pass
+                };
+                
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.dataset.username = username;
+                
+                const rowBg = isAdmin ? "bg-indigo-50" : "";
+                const roleBadge = isAdmin 
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">ADMIN</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-800">WORKER</span>`;
+                
+                const silButon = isAdmin 
+                    ? `<span class="text-gray-400 italic text-[10px]">Sistem</span>`
+                    : `<button onclick="window.operatorSil('${username}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold hover:bg-red-600">🗑️ Sil</button>`;
+                
+                tr.innerHTML = `
+                    <td class="p-2 ${rowBg}">
+                        <input type="text" 
+                               id="op-name-${username}" 
+                               value="${user.name}" 
+                               oninput="window.opFieldChanged('${username}')"
+                               class="op-input ${isAdmin ? 'bg-indigo-50' : ''}">
+                    </td>
+                    <td class="p-2 ${rowBg}">
+                        <input type="text" 
+                               id="op-user-${username}" 
+                               value="${username}" 
+                               oninput="window.opFieldChanged('${username}')"
+                               class="op-input font-mono ${isAdmin ? 'bg-indigo-50' : ''}">
+                    </td>
+                    <td class="p-2 ${rowBg}">
+                        <input type="text" 
+                               id="op-pass-${username}" 
+                               value="${user.pass}" 
+                               oninput="window.opFieldChanged('${username}')"
+                               class="op-input ${isAdmin ? 'bg-indigo-50' : ''}">
+                    </td>
+                    <td class="p-2 ${rowBg}">${roleBadge}</td>
+                    <td class="p-2 ${rowBg} text-center">
+                        <button onclick="window.operatorKaydet('${username}')" 
+                                id="op-save-${username}"
+                                class="bg-green-600 text-white px-2 py-1 rounded text-[10px] font-semibold hover:bg-green-700 mr-1 hidden">
+                            💾 Kaydet
+                        </button>
+                        ${silButon}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.opFieldChanged = function(username) {
+            const orig = opOriginalValues[username];
+            if (!orig) return;
+            
+            const currentName = document.getElementById(`op-name-${username}`).value.trim();
+            const currentUser = document.getElementById(`op-user-${username}`).value.trim();
+            const currentPass = document.getElementById(`op-pass-${username}`).value;
+            
+            const degisti = (currentName !== orig.name) || 
+                           (currentUser !== orig.username) || 
+                           (currentPass !== orig.pass);
+            
+            const saveBtn = document.getElementById(`op-save-${username}`);
+            if (saveBtn) {
+                saveBtn.classList.toggle('hidden', !degisti);
+            }
+            
+            ['name', 'user', 'pass'].forEach(field => {
+                const input = document.getElementById(`op-${field}-${username}`);
+                let val = input.value.trim();
+                let origVal = field === 'user' ? orig.username : (field === 'name' ? orig.name : orig.pass);
+                if (val !== origVal) {
+                    input.classList.add('changed');
+                } else {
+                    input.classList.remove('changed');
+                }
+            });
+        }
+
+        window.operatorKaydet = async function(username) {
+            const newName = document.getElementById(`op-name-${username}`).value.trim();
+            const newUsername = document.getElementById(`op-user-${username}`).value.trim();
+            const newPass = document.getElementById(`op-pass-${username}`).value;
+            
+            if (!newName || !newUsername || !newPass) { 
+                alert("Tüm alanları doldurun!"); 
+                return; 
+            }
+            if (newPass.length < 4) { 
+                alert("Şifre en az 4 karakter olmalı!"); 
+                return; 
+            }
+            if (newUsername.length < 3) { 
+                alert("Kullanıcı adı en az 3 karakter olmalı!"); 
+                return; 
+            }
+            
+            const isAdmin = USERS[username].role === "admin";
+            const usernameChanged = newUsername !== username;
+            
+            if (usernameChanged && USERS[newUsername]) {
+                alert(`"${newUsername}" kullanıcı adı zaten kullanılıyor!`);
+                return;
+            }
+            
+            try {
+                if (usernameChanged) {
+                    USERS[newUsername] = { 
+                        pass: newPass, 
+                        role: USERS[username].role, 
+                        name: newName 
+                    };
+                    await firebaseKaydet("kullanicilar", newUsername, USERS[newUsername]);
+                    await firebaseSil("kullanicilar", username);
+                    delete USERS[username];
+                    
+                    dbMock.forEach(k => { 
+                        if(k.username === username) k.username = newUsername; 
+                        if(k.suAnkiSorumlu === username) k.suAnkiSorumlu = newUsername; 
+                    });
+                    
+                    if (currentUser && currentUser.username === username) {
+                        currentUser.username = newUsername;
+                        currentUser.name = newName;
+                        document.getElementById("masterNameDisplay").innerText = newName;
+                    }
+                    
+                    alert(`✅ Kullanıcı adı "${username}" → "${newUsername}" olarak değiştirildi.`);
+                } else {
+                    USERS[username].name = newName;
+                    USERS[username].pass = newPass;
+                    await firebaseGuncelle("kullanicilar", username, { 
+                        name: newName, 
+                        pass: newPass 
+                    });
+                    
+                    if (currentUser && currentUser.username === username) {
+                        currentUser.name = newName;
+                        document.getElementById("masterNameDisplay").innerText = newName;
+                    }
+                    
+                    alert("✅ Bilgiler güncellendi.");
+                }
+                
+                window.operatorTablosunuYenile();
+            } catch (e) {
+                console.error(e);
+                alert("❌ Güncelleme sırasında hata oluştu: " + e.message);
+            }
+        }
+
+        window.operatorSil = async function(username) {
+            if (confirm(`"${USERS[username].name}" (${username}) silinsin mi?\n\nBu kullanıcıya ait üretim kayıtları silinmeyecek.`)) {
+                delete USERS[username];
+                await firebaseSil("kullanicilar", username);
+                alert("Silindi.");
+                window.operatorTablosunuYenile();
+            }
+        }
+
+        window.makineEkle = async function() {
+            const kod = document.getElementById("newMachineCode").value.trim();
+            const ad = document.getElementById("newMachineName").value.trim();
+            if (!kod || !ad) { alert("Kod ve ad girin!"); return; }
+            if (MAKINALAR.find(m => m.kod === kod)) { alert("Bu kod zaten var!"); return; }
+            const yeniMakine = { kod, ad };
+            MAKINALAR.push(yeniMakine);
+            MAKINALAR.sort((a, b) => parseInt(a.kod) - parseInt(b.kod));
+            await firebaseKaydet("makinalar", kod, yeniMakine);
+            alert(`✅ ${ad} eklendi.`);
+            document.getElementById("newMachineCode").value = "";
+            document.getElementById("newMachineName").value = "";
+            window.makineTablosunuYenile();
+        }
+
+        window.makineAdiniDegistir = async function(kod) {
+            const makine = MAKINALAR.find(m => m.kod === kod);
+            if (!makine) return;
+            const yeniAd = prompt(`"${makine.ad}" için yeni ad:`, makine.ad);
+            if (!yeniAd || !yeniAd.trim()) return;
+            makine.ad = yeniAd.trim();
+            await firebaseGuncelle("makinalar", kod, { ad: makine.ad });
+            alert("✅ Makine adı güncellendi.");
+            window.makineTablosunuYenile();
+        }
+
+        window.makineSil = async function(kod) {
+            const kullanim = dbMock.filter(k => k.makine === kod);
+            if (kullanim.length > 0) {
+                if (!confirm(`⚠️ Bu makine ${kullanim.length} kayıtta kullanılıyor!\n\nYine de silmek istiyor musunuz?`)) {
+                    return;
+                }
+            } else {
+                if (!confirm(`"${kod}" kodlu makine silinsin mi?`)) return;
+            }
+            MAKINALAR = MAKINALAR.filter(m => m.kod !== kod);
+            await firebaseSil("makinalar", kod);
+            alert("Makine silindi.");
+            window.makineTablosunuYenile();
+        }
+
+        window.makineTablosunuYenile = function() {
+            const tbody = document.getElementById("machineListTable");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            if (MAKINALAR.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">Makine yok.</td></tr>`;
+                return;
+            }
+            MAKINALAR.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-2 font-mono font-bold text-blue-700">${m.kod}</td>
+                    <td class="p-2">${m.ad}</td>
+                    <td class="p-2 text-center">
+                        <button onclick="window.makineAdiniDegistir('${m.kod}')" class="bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-semibold mr-1">✏️ Düzenle</button>
+                        <button onclick="window.makineSil('${m.kod}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold">🗑️ Sil</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.takvimListeleriniYenile = function() {
+            const hC = document.getElementById("holidayList");
+            const wC = document.getElementById("workdayList");
+            if (!hC || !wC) return;
+            hC.innerHTML = TATIL_GUNLERI.length === 0 ? "<span class='text-gray-400 text-xs italic'>Kayıt yok</span>" : 
+                TATIL_GUNLERI.map(t => `<span class="inline-flex items-center bg-red-100 text-red-800 text-xs font-semibold px-2 py-0.5 rounded">${new Date(t).toLocaleDateString('tr-TR')} <button onclick="window.kuralSil('tatil','${t}')" class="text-red-600 font-bold ml-1">×</button></span>`).join('');
+            wC.innerHTML = MESAI_GUNLERI.length === 0 ? "<span class='text-gray-400 text-xs italic'>Kayıt yok</span>" : 
+                MESAI_GUNLERI.map(t => `<span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">${new Date(t).toLocaleDateString('tr-TR')} <button onclick="window.kuralSil('calisma','${t}')" class="text-green-600 font-bold ml-1">×</button></span>`).join('');
+        }
+
+        window.kuralEkle = async function(tip) {
+            const tarih = document.getElementById("newHolidayDate").value;
+            if (!tarih) { alert("Tarih seçin!"); return; }
+            if (tip === 'tatil') {
+                if (TATIL_GUNLERI.includes(tarih)) return;
+                TATIL_GUNLERI.push(tarih);
+                await firebaseKaydet("tatil_gunleri", tarih, { tarih });
+            } else {
+                if (MESAI_GUNLERI.includes(tarih)) return;
+                MESAI_GUNLERI.push(tarih);
+                await firebaseKaydet("mesai_gunleri", tarih, { tarih });
+            }
+            window.takvimListeleriniYenile();
+            document.getElementById("newHolidayDate").value = "";
+        }
+
+        window.kuralSil = async function(tip, tarih) {
+            if (tip === 'tatil') {
+                TATIL_GUNLERI = TATIL_GUNLERI.filter(t => t !== tarih);
+                await firebaseSil("tatil_gunleri", tarih);
+            } else {
+                MESAI_GUNLERI = MESAI_GUNLERI.filter(t => t !== tarih);
+                await firebaseSil("mesai_gunleri", tarih);
+            }
+            window.takvimListeleriniYenile();
+        }
+
+        window.addNewProduct = async function() {
+            const code = document.getElementById("newProductCode").value.trim().toUpperCase();
+            const name = document.getElementById("newProductName").value.trim();
+            if (!code || !name) { alert("Tüm alanları doldurun!"); return; }
+            await firebaseKaydet("urunler", code, {
+                urunKodu: code, ad: name, createdAt: new Date()
+            });
+            alert(`✅ Ürün "${code}" eklendi!\n\n📝 GitHub'a resim ekleyin: ${code}.jpg`);
+            document.getElementById("newProductCode").value = "";
+            document.getElementById("newProductName").value = "";
+        }
+    </script>
+</body>
+</html>
