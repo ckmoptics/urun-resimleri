@@ -21,7 +21,7 @@
         .gramaj-input, .sure-input { width: 70px; padding: 3px 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; text-align: center; }
         .gramaj-input:focus, .sure-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .table-scroll table { min-width: 1600px; }
+        .table-scroll table { min-width: 1700px; }
         .op-input { width: 100%; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; }
         .op-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
         .op-input.changed { border-color: #f59e0b; background-color: #fffbeb; }
@@ -31,6 +31,10 @@
         .sapma-orta { background-color: #fef3c7; color: #92400e; }
         .sapma-kotu { background-color: #fee2e2; color: #991b1b; }
         .referans-box { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 8px; padding: 12px; margin: 8px 0; }
+        .tahmini-bitis { font-weight: 600; }
+        .tahmini-bitis-gecikti { color: #dc2626; background-color: #fee2e2; padding: 2px 6px; border-radius: 4px; }
+        .tahmini-bitis-normal { color: #059669; background-color: #d1fae5; padding: 2px 6px; border-radius: 4px; }
+        .tahmini-bitis-yaklasti { color: #d97706; background-color: #fef3c7; padding: 2px 6px; border-radius: 4px; }
         @media (max-width: 640px) {
             .mobile-btn { font-size: 11px; padding: 6px 8px; }
             .mobile-header { flex-direction: column; align-items: stretch; }
@@ -60,7 +64,7 @@
             <div class="text-center mb-6">
                 <img src="https://raw.githubusercontent.com/ckmoptics/ekran/main/logo-ckm.png" alt="CKM Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
                 <h2 class="text-2xl font-bold text-center text-gray-800">Üretim Takip Sistemi</h2>
-                <p class="text-xs text-gray-500 mt-1">CKM Optics</p>
+                <p class="text-xs text-gray-500 mt-1">CKM PLASTİK ve METAL KALIP DIŞ. TİC. SAN. LTD. ŞTİ.</p>
             </div>
             <div class="space-y-4">
                 <div>
@@ -74,7 +78,7 @@
                 <button onclick="window.login()" class="w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700">Giriş Yap</button>
             </div>
             <div class="mt-6 text-center">
-                <p class="text-[10px] text-gray-400">© 2026 CKM Optics | Üretim Takip Sistemi v2.2</p>
+                <p class="text-[10px] text-gray-400">© 2026 CKM Kalıp & Optics | Üretim Takip Sistemi v1.0 | Created by ÖMER</p>
             </div>
         </div>
     </div>
@@ -110,10 +114,11 @@
                                 <th class="p-2 text-center">Çevrim (sn)</th>
                                 <th class="p-2 text-center">Göz</th>
                                 <th class="p-2 text-center">Baskı / Ürün</th>
-                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center">Gramaj (yolluklu)</th>
                                 <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
                                 <th class="p-2 text-center">Sapmalar</th>
                                 <th class="p-2">Başlangıç</th>
+                                <th class="p-2 text-center">Tahmini Bitiş</th>
                                 <th class="p-2">Açıklamalar</th>
                                 <th class="p-2 text-center">İşlem</th>
                             </tr>
@@ -143,7 +148,7 @@
                                 <p id="opAutoProductCode" class="text-sm text-blue-700 font-mono font-bold mb-2"></p>
                                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs">
                                     <div class="bg-white bg-opacity-70 p-2 rounded">
-                                        <div class="text-gray-500 mb-0.5">🎯 Birim Gramaj</div>
+                                        <div class="text-gray-500 mb-0.5">🎯 Birim Gramaj (yolluksuz)</div>
                                         <div id="refBirimGramaj" class="font-bold text-gray-800">-</div>
                                     </div>
                                     <div class="bg-white bg-opacity-70 p-2 rounded">
@@ -151,7 +156,7 @@
                                         <div id="refGozSayisi" class="font-bold text-gray-800">-</div>
                                     </div>
                                     <div class="bg-white bg-opacity-70 p-2 rounded">
-                                        <div class="text-gray-500 mb-0.5">⚖️ Hedef Toplam</div>
+                                        <div class="text-gray-500 mb-0.5">⚖️ Hedef Toplam (yolluksuz)</div>
                                         <div id="refHedefToplam" class="font-bold text-blue-700">-</div>
                                     </div>
                                     <div class="bg-white bg-opacity-70 p-2 rounded">
@@ -167,7 +172,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600">Makine</label>
@@ -177,14 +181,6 @@
                         <label class="block text-xs font-semibold text-gray-600">Hammadde</label>
                         <select id="opHammadde" class="w-full mt-1 p-2 border rounded-md text-sm bg-white">
                             <option value="">Seçiniz...</option>
-                            <option value="ABS">ABS – Akrilonitril</option>
-                            <option value="ABS FR">ABS FR - Yanmaz ABS</option>
-                            <option value="PA">PA – Poliamid</option>
-                            <option value="PC">PC – Polikarbon</option>
-                            <option value="PMMA">PMMA – Akrilik</option>
-                            <option value="POM">POM – Polioksimetilen</option>
-                            <option value="PP">PP – Polipropilen</option>
-                            <option value="PS">PS - Kristal</option>
                         </select>
                     </div>
                     <div>
@@ -256,7 +252,7 @@
                                 <th class="p-2">Ürün Adı</th>
                                 <th class="p-2 text-center">Renk</th>
                                 <th class="p-2 text-center">Baskı / Ürün</th>
-                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center">Gramaj (yolluklu)</th>
                                 <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
                                 <th class="p-2 text-center">Sapmalar</th>
                                 <th class="p-2">Başlangıç</th>
@@ -304,7 +300,8 @@
                 <div class="flex flex-wrap gap-2">
                     <button onclick="window.showPage('masterOperatorsPage')" class="mobile-btn bg-blue-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700">👤 Operatörler</button>
                     <button onclick="window.showPage('masterMachinesPage')" class="mobile-btn bg-teal-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-teal-700">⚙️ Makineler</button>
-                    <button onclick="window.showPage('masterCalendarPage')" class="mobile-btn bg-purple-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700"> Takvim</button>
+                    <button onclick="window.showPage('masterHammaddePage')" class="mobile-btn bg-amber-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-amber-700">🧪 Hammaddeler</button>
+                    <button onclick="window.showPage('masterCalendarPage')" class="mobile-btn bg-purple-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700">📅 Takvim</button>
                     <button onclick="window.showPage('masterAddProductPage')" class="mobile-btn bg-green-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-green-700">📦 Yeni Ürün</button>
                     <button onclick="window.showPage('masterReportsPage')" class="mobile-btn bg-indigo-600 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-indigo-700">📊 Raporlar</button>
                     <button onclick="window.logout()" class="mobile-btn bg-red-50 text-red-600 px-3 py-2 rounded-lg font-semibold text-sm hover:bg-red-100">Çıkış</button>
@@ -321,7 +318,7 @@
                 </div>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-sm">
-                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2"> Tüm Üretim Kayıtları</h3>
+                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">📊 Tüm Üretim Kayıtları</h3>
                 <div class="table-scroll">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -336,11 +333,12 @@
                                 <th class="p-2 text-center">Çevrim (sn)</th>
                                 <th class="p-2 text-center">Göz</th>
                                 <th class="p-2 text-center">Baskı / Ürün</th>
-                                <th class="p-2 text-center">Gramaj (gr)</th>
+                                <th class="p-2 text-center">Gramaj (yolluklu)</th>
                                 <th class="p-2 text-center text-orange-700">Toplam Gramaj</th>
                                 <th class="p-2 text-center">Sapmalar</th>
                                 <th class="p-2">Başlangıç</th>
                                 <th class="p-2">Bitiş</th>
+                                <th class="p-2 text-center">Tahmini Bitiş</th>
                                 <th class="p-2">Net Çalışma</th>
                                 <th class="p-2">Teorik/Boşta</th>
                                 <th class="p-2">Açıklamalar</th>
@@ -424,6 +422,39 @@
         </div>
     </div>
 
+    <!-- ============ MASTER: HAMMADDE YÖNETİMİ ============ -->
+    <div id="masterHammaddePage" class="page">
+        <div class="max-w-3xl mx-auto">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
+                <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
+                <h2 class="text-xl font-bold text-gray-800">🧪 Hammadde Yönetimi</h2>
+                <div></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Yeni Hammadde Ekle</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="text" id="newHammaddeKod" placeholder="Hammadde Kodu (örn: PC)" class="p-2 border rounded-md text-xs uppercase">
+                        <input type="text" id="newHammaddeAd" placeholder="Hammadde Adı (örn: Polikarbon)" class="p-2 border rounded-md text-xs">
+                        <button onclick="window.hammaddeEkle()" class="bg-amber-600 text-white p-2 rounded-md text-xs font-bold hover:bg-amber-700">➕ Hammadde Ekle</button>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="w-full text-left border-collapse text-xs" style="min-width: 400px;">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 border-b">
+                                <th class="p-2">Kod</th>
+                                <th class="p-2">Ad</th>
+                                <th class="p-2 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hammaddeListTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ============ MASTER: TAKVİM ============ -->
     <div id="masterCalendarPage" class="page">
         <div class="max-w-4xl mx-auto">
@@ -459,7 +490,7 @@
         <div class="max-w-md mx-auto">
             <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-4">
                 <button onclick="window.showPage('masterHomePage')" class="text-blue-600 hover:text-blue-800 font-semibold">← Geri</button>
-                <h2 class="text-xl font-bold text-gray-800"> Yeni Ürün</h2>
+                <h2 class="text-xl font-bold text-gray-800">📦 Yeni Ürün</h2>
                 <div></div>
             </div>
             <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
@@ -472,12 +503,12 @@
                     <input type="text" id="newProductName" class="w-full mt-1 p-2 border rounded-md" placeholder="95*20 KARE SPOT BAŞLIK">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">🎯 Birim Gramaj (gram)</label>
+                    <label class="block text-sm font-medium text-gray-700">🎯 Birim Gramaj (yolluksuz, gram)</label>
                     <input type="number" id="newProductGramaj" class="w-full mt-1 p-2 border rounded-md" placeholder="25" step="0.01">
-                    <p class="text-xs text-gray-500 mt-1">Bir adet ürünün gramajı</p>
+                    <p class="text-xs text-gray-500 mt-1">Bir adet ürünün yolluksuz gramajı</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">️ Kalıp Göz Sayısı</label>
+                    <label class="block text-sm font-medium text-gray-700">👁️ Kalıp Göz Sayısı</label>
                     <input type="number" id="newProductGoz" class="w-full mt-1 p-2 border rounded-md" placeholder="4">
                 </div>
                 <div>
@@ -488,21 +519,10 @@
                     <label class="block text-sm font-medium text-gray-700">🧪 Hammadde</label>
                     <select id="newProductHammadde" class="w-full mt-1 p-2 border rounded-md text-sm bg-white">
                         <option value="">Seçiniz...</option>
-                        <option value="ABS">ABS – Akrilonitril</option>
-                        <option value="ABS FR">ABS FR - Yanmaz ABS</option>
-                        <option value="PA">PA – Poliamid</option>
-                        <option value="PC">PC – Polikarbon</option>
-                        <option value="PMMA">PMMA – Akrilik</option>
-                        <option value="POM">POM – Polioksimetilen</option>
-                        <option value="PP">PP – Polipropilen</option>
-                        <option value="PS">PS - Kristal</option>
                     </select>
                 </div>
                 <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p class="text-xs text-blue-700">
-                        <strong>📝 Bilgi:</strong> Resim için GitHub'a yükleyin:<br>
-                        <code class="bg-blue-100 px-1 rounded text-[10px]">[ÜRÜN_KODU].jpg</code>
-                    </p>
+                    <p class="text-xs text-blue-700"><strong>📝 Bilgi:</strong> Resim için GitHub'a yükleyin:<br><code class="bg-blue-100 px-1 rounded text-[10px]">[ÜRÜN_KODU].jpg</code></p>
                 </div>
                 <button onclick="window.addNewProduct()" class="w-full bg-green-600 text-white p-3 rounded-md font-semibold hover:bg-green-700">💾 Kaydet</button>
             </div>
@@ -576,6 +596,7 @@
 
         let USERS = {};
         let MAKINALAR = [];
+        let HAMMADDELER = {};
         let TATIL_GUNLERI = []; 
         let MESAI_GUNLERI = []; 
         let dbMock = []; 
@@ -587,41 +608,190 @@
 
         const GITHUB_REPO = { owner: "ckmoptics", repo: "urun-resimleri", branch: "main" };
 
-        const HAMMADDE_ADLARI = {
-            'ABS': 'Akrilonitril',
-            'ABS FR': 'Yanmaz ABS',
-            'PA': 'Poliamid',
-            'PC': 'Polikarbon',
-            'PMMA': 'Akrilik',
-            'POM': 'Polioksimetilen',
-            'PP': 'Polipropilen',
-            'PS': 'Kristal'
+        // Varsayılan hammadde renkleri (yeni eklenenler için dinamik oluşturulacak)
+        const DEFAULT_HAMMADDE_RENKLER = {
+            'PP': { bg: 'bg-fuchsia-500', light: 'bg-fuchsia-100', text: 'text-fuchsia-700' },
+            'ABS': { bg: 'bg-blue-500', light: 'bg-blue-100', text: 'text-blue-700' },
+            'ABS FR': { bg: 'bg-indigo-500', light: 'bg-indigo-100', text: 'text-indigo-700' },
+            'PC': { bg: 'bg-green-500', light: 'bg-green-100', text: 'text-green-700' },
+            'PA': { bg: 'bg-pink-500', light: 'bg-pink-100', text: 'text-pink-700' },
+            'POM': { bg: 'bg-purple-500', light: 'bg-purple-100', text: 'text-purple-700' },
+            'PMMA': { bg: 'bg-amber-500', light: 'bg-amber-100', text: 'text-amber-700' },
+            'PS': { bg: 'bg-cyan-500', light: 'bg-cyan-100', text: 'text-cyan-700' }
         };
 
-        const HAMMADDE_RENKLER = {
-            'PP':     { bg: 'bg-fuchsia-500',  light: 'bg-fuchsia-100',  text: 'text-fuchsia-700' },
-            'ABS':    { bg: 'bg-blue-500',     light: 'bg-blue-100',     text: 'text-blue-700' },
-            'ABS FR': { bg: 'bg-indigo-500',   light: 'bg-indigo-100',   text: 'text-indigo-700' },
-            'PC':     { bg: 'bg-green-500',    light: 'bg-green-100',    text: 'text-green-700' },
-            'PA':     { bg: 'bg-pink-500',     light: 'bg-pink-100',     text: 'text-pink-700' },
-            'POM':    { bg: 'bg-purple-500',   light: 'bg-purple-100',   text: 'text-purple-700' },
-            'PMMA':   { bg: 'bg-amber-500',    light: 'bg-amber-100',    text: 'text-amber-700' },
-            'PS':     { bg: 'bg-cyan-500',     light: 'bg-cyan-100',     text: 'text-cyan-700' }
-        };
+        const MESAI_BASLANGIC = 9;
+        const MESAI_BITIS = 19;
 
-        function getSapmaCell(sapma, hedef, gercek, birim) {
+        function getHammaddeRenk(kod) {
+            if (DEFAULT_HAMMADDE_RENKLER[kod]) return DEFAULT_HAMMADDE_RENKLER[kod];
+            // Yeni eklenen hammadde için hash tabanlı renk üret
+            let hash = 0;
+            for (let i = 0; i < kod.length; i++) {
+                hash = kod.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const colors = [
+                { bg: 'bg-red-500', light: 'bg-red-100', text: 'text-red-700' },
+                { bg: 'bg-orange-500', light: 'bg-orange-100', text: 'text-orange-700' },
+                { bg: 'bg-yellow-500', light: 'bg-yellow-100', text: 'text-yellow-700' },
+                { bg: 'bg-lime-500', light: 'bg-lime-100', text: 'text-lime-700' },
+                { bg: 'bg-emerald-500', light: 'bg-emerald-100', text: 'text-emerald-700' },
+                { bg: 'bg-teal-500', light: 'bg-teal-100', text: 'text-teal-700' },
+                { bg: 'bg-sky-500', light: 'bg-sky-100', text: 'text-sky-700' },
+                { bg: 'bg-violet-500', light: 'bg-violet-100', text: 'text-violet-700' },
+                { bg: 'bg-rose-500', light: 'bg-rose-100', text: 'text-rose-700' }
+            ];
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        function getSapmaCell(sapma, hedef, gercek, birim, hedefEtiket, gercekEtiket) {
             if (sapma === null || sapma === undefined || isNaN(sapma) || hedef <= 0) return '<span class="text-gray-400 italic">-</span>';
             const absSapma = Math.abs(sapma);
             let className, emoji;
             if (absSapma <= 5) { className = 'sapma-iyi'; emoji = '🟢'; }
-            else if (absSapma <= 15) { className = 'sapma-orta'; emoji = ''; }
+            else if (absSapma <= 15) { className = 'sapma-orta'; emoji = '🟡'; }
             else { className = 'sapma-kotu'; emoji = '🔴'; }
             const isaret = sapma > 0 ? '+' : '';
             return `<div class="text-[10px] leading-tight">
-                <div class="text-gray-500">Hedef: ${hedef} ${birim}</div>
-                <div class="font-medium">Gerçek: ${gercek} ${birim}</div>
+                <div class="text-gray-500">${hedefEtiket}: ${hedef} ${birim}</div>
+                <div class="font-medium">${gercekEtiket}: ${gercek} ${birim}</div>
                 <span class="sapma-badge ${className}">${emoji} ${isaret}${sapma.toFixed(1)}%</span>
             </div>`;
+        }
+
+        function isMesaiGunu(tarih) {
+            const tarihStr = `${tarih.getFullYear()}-${String(tarih.getMonth()+1).padStart(2,'0')}-${String(tarih.getDate()).padStart(2,'0')}`;
+            const gun = tarih.getDay();
+            if (MESAI_GUNLERI.includes(tarihStr)) return true;
+            if (TATIL_GUNLERI.includes(tarihStr)) return false;
+            if (gun === 0 || gun === 6) return false;
+            return true;
+        }
+
+        function calculateEstimatedEndTime(baslangicTarihi, toplamBaski, cevirimSuresiSn) {
+            if (!baslangicTarihi || !toplamBaski || !cevirimSuresiSn || cevirimSuresiSn <= 0) return null;
+            const baslangic = new Date(baslangicTarihi);
+            const toplamSaniye = toplamBaski * cevirimSuresiSn;
+            let kalanSaniye = toplamSaniye;
+            let current = new Date(baslangic);
+            
+            const baslangicSaati = current.getHours();
+            if (baslangicSaati < MESAI_BASLANGIC) {
+                current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+            } else if (baslangicSaati >= MESAI_BITIS) {
+                current.setDate(current.getDate() + 1);
+                current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+            }
+            
+            while (kalanSaniye > 0) {
+                if (!isMesaiGunu(current)) {
+                    current.setDate(current.getDate() + 1);
+                    current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+                    continue;
+                }
+                const currentSaati = current.getHours();
+                if (currentSaati < MESAI_BASLANGIC) {
+                    current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+                    continue;
+                }
+                if (currentSaati >= MESAI_BITIS) {
+                    current.setDate(current.getDate() + 1);
+                    current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+                    continue;
+                }
+                const mesaiBitisTarih = new Date(current);
+                mesaiBitisTarih.setHours(MESAI_BITIS, 0, 0, 0);
+                const mesaiKalanSaniye = Math.floor((mesaiBitisTarih - current) / 1000);
+                if (kalanSaniye <= mesaiKalanSaniye) {
+                    current = new Date(current.getTime() + kalanSaniye * 1000);
+                    kalanSaniye = 0;
+                } else {
+                    kalanSaniye -= mesaiKalanSaniye;
+                    current.setDate(current.getDate() + 1);
+                    current.setHours(MESAI_BASLANGIC, 0, 0, 0);
+                }
+            }
+            return current;
+        }
+
+        function getTahminiBitisHtml(kayit) {
+            let cevirimSure = kayit.baskiSuresi || 0;
+            let kaynakEtiketi = '';
+            
+            if (cevirimSure <= 0) {
+                const urunBilgisi = window._urunBilgisiCache && window._urunBilgisiCache[kayit.urunKodu];
+                if (urunBilgisi && urunBilgisi.hedefCevrimSuresi > 0) {
+                    cevirimSure = urunBilgisi.hedefCevrimSuresi;
+                    kaynakEtiketi = ' <span class="text-[9px] text-gray-500">(hedef)</span>';
+                } else {
+                    return '<span class="text-gray-400 italic text-[10px]">Çevrim süresi yok</span>';
+                }
+            }
+            
+            if (!kayit.rawBitis) {
+                const tahminiBitis = calculateEstimatedEndTime(kayit.rawBaslangic, kayit.toplamBaski, cevirimSure);
+                if (!tahminiBitis) return '<span class="text-gray-400 italic text-[10px]">-</span>';
+                
+                const simdi = new Date();
+                const farkDk = Math.floor((tahminiBitis - simdi) / 60000);
+                
+                let durumClass = 'tahmini-bitis-normal';
+                let durumIcon = '🕐';
+                let durumText = '';
+                
+                if (farkDk < 0) {
+                    durumClass = 'tahmini-bitis-gecikti';
+                    durumIcon = '⚠️';
+                    const gecikmeDk = Math.abs(farkDk);
+                    if (gecikmeDk < 60) durumText = `${gecikmeDk} dk gecikme`;
+                    else durumText = `${Math.floor(gecikmeDk/60)} sa ${gecikmeDk%60} dk gecikme`;
+                } else if (farkDk < 120) {
+                    durumClass = 'tahmini-bitis-yaklasti';
+                    durumIcon = '⏳';
+                    if (farkDk < 60) durumText = `${farkDk} dk kaldı`;
+                    else durumText = `${Math.floor(farkDk/60)} sa ${farkDk%60} dk kaldı`;
+                } else {
+                    if (farkDk < 1440) durumText = `${Math.floor(farkDk/60)} sa ${farkDk%60} dk kaldı`;
+                    else durumText = `${Math.floor(farkDk/1440)} gün ${Math.floor((farkDk%1440)/60)} sa kaldı`;
+                }
+                
+                const bitisStr = tahminiBitis.toLocaleString('tr-TR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                
+                return `<div class="tahmini-bitis ${durumClass} text-[10px]">
+                    <div>${durumIcon} ${bitisStr}${kaynakEtiketi}</div>
+                    <div class="text-[9px] mt-0.5">${durumText}</div>
+                </div>`;
+            } else {
+                const tahminiBitis = calculateEstimatedEndTime(kayit.rawBaslangic, kayit.toplamBaski, cevirimSure);
+                if (!tahminiBitis) return '<span class="text-gray-400 italic text-[10px]">-</span>';
+                
+                const gercekBitis = new Date(kayit.rawBitis);
+                const farkDk = Math.floor((gercekBitis - tahminiBitis) / 60000);
+                
+                let durumClass = 'tahmini-bitis-normal';
+                let durumIcon = '✅';
+                let durumText = 'Zamanında';
+                
+                if (farkDk > 30) {
+                    durumClass = 'tahmini-bitis-gecikti';
+                    durumIcon = '⚠️';
+                    if (farkDk < 60) durumText = `${farkDk} dk geç`;
+                    else durumText = `${Math.floor(farkDk/60)} sa ${farkDk%60} dk geç`;
+                } else if (farkDk < -30) {
+                    durumIcon = '🚀';
+                    const erken = Math.abs(farkDk);
+                    if (erken < 60) durumText = `${erken} dk erken`;
+                    else durumText = `${Math.floor(erken/60)} sa ${erken%60} dk erken`;
+                }
+                
+                return `<div class="tahmini-bitis ${durumClass} text-[10px]">
+                    <div>${durumIcon} ${durumText}${kaynakEtiketi}</div>
+                    <div class="text-[9px] mt-0.5 text-gray-500">Hedef: ${tahminiBitis.toLocaleString('tr-TR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'})}</div>
+                </div>`;
+            }
         }
 
         window.showPage = function(pageId) {
@@ -635,6 +805,7 @@
             if (pageId === 'opCompletedPage') window.loadOpCompletedJobs();
             if (pageId === 'opFormPage') {
                 window.populateMachineSelect('opMakine');
+                window.populateHammaddeSelect('opHammadde');
                 if (!editModeId) {
                     document.getElementById('opHammadde').value = '';
                     document.getElementById('opRenk').value = 'Belirtilmedi';
@@ -658,7 +829,11 @@
             }
             if (pageId === 'masterOperatorsPage') window.operatorTablosunuYenile();
             if (pageId === 'masterMachinesPage') window.makineTablosunuYenile();
+            if (pageId === 'masterHammaddePage') window.hammaddeTablosunuYenile();
             if (pageId === 'masterCalendarPage') window.takvimListeleriniYenile();
+            if (pageId === 'masterAddProductPage') {
+                window.populateHammaddeSelect('newProductHammadde');
+            }
             if (pageId === 'masterReportsPage') {
                 window.generateMachinePerformanceReport();
                 window.generateEfficiencyReport();
@@ -672,10 +847,20 @@
             if (document.getElementById('masterHomePage').classList.contains('active')) window.tabloyuYenile();
         }
 
+        async function cacheUrunBilgileri() {
+            window._urunBilgisiCache = {};
+            const urunKodlari = [...new Set(dbMock.map(k => k.urunKodu))];
+            for (const kod of urunKodlari) {
+                const bilgi = await urunBilgisiGetir(kod);
+                if (bilgi) window._urunBilgisiCache[kod] = bilgi;
+            }
+        }
+
         function startRealtimeListeners() {
-            db.collection("uretim_kayitlari").onSnapshot(snapshot => {
+            db.collection("uretim_kayitlari").onSnapshot(async snapshot => {
                 dbMock = [];
                 snapshot.forEach(d => { dbMock.push({ id: d.id, ...d.data() }); });
+                await cacheUrunBilgileri();
                 aktifSayfayiYenile();
             }, error => { console.error("Üretim dinleme hatası:", error); });
 
@@ -691,6 +876,17 @@
                 MAKINALAR.sort((a, b) => parseInt(a.kod) - parseInt(b.kod));
                 if (document.getElementById('masterMachinesPage').classList.contains('active')) window.makineTablosunuYenile();
             }, error => { console.error("Makine dinleme hatası:", error); });
+
+            db.collection("hammaddeler").onSnapshot(snapshot => {
+                HAMMADDELER = {};
+                snapshot.forEach(d => { 
+                    const data = d.data();
+                    HAMMADDELER[d.id] = data.ad || d.id;
+                });
+                if (document.getElementById('masterHammaddePage').classList.contains('active')) window.hammaddeTablosunuYenile();
+                if (document.getElementById('opFormPage').classList.contains('active')) window.populateHammaddeSelect('opHammadde');
+                if (document.getElementById('masterAddProductPage').classList.contains('active')) window.populateHammaddeSelect('newProductHammadde');
+            }, error => { console.error("Hammadde dinleme hatası:", error); });
 
             db.collection("tatil_gunleri").onSnapshot(snapshot => {
                 TATIL_GUNLERI = [];
@@ -744,7 +940,6 @@
                 const usersSnap = await db.collection("kullanicilar").get();
                 USERS = {};
                 usersSnap.forEach(d => { USERS[d.id] = d.data(); });
-                
                 if (!USERS["admin"]) {
                     USERS["admin"] = { pass: "9999", role: "admin", name: "Yönetici (Admin)" };
                     await firebaseKaydet("kullanicilar", "admin", USERS["admin"]);
@@ -753,35 +948,48 @@
                     await firebaseSil("kullanicilar", "master");
                     delete USERS["master"];
                 }
-
                 const makinaSnap = await db.collection("makinalar").get();
                 MAKINALAR = [];
                 makinaSnap.forEach(d => { MAKINALAR.push({ kod: d.id, ...d.data() }); });
                 if (MAKINALAR.length === 0) {
-                    const defaults = [
-                        { kod: "120", ad: "Makine 120" },
-                        { kod: "180", ad: "Makine 180" },
-                        { kod: "220", ad: "Makine 220" }
-                    ];
-                    for (const m of defaults) {
-                        await firebaseKaydet("makinalar", m.kod, m);
-                        MAKINALAR.push(m);
-                    }
+                    const defaults = [{ kod: "120", ad: "Makine 120" }, { kod: "180", ad: "Makine 180" }, { kod: "220", ad: "Makine 220" }];
+                    for (const m of defaults) { await firebaseKaydet("makinalar", m.kod, m); MAKINALAR.push(m); }
                 }
                 MAKINALAR.sort((a, b) => parseInt(a.kod) - parseInt(b.kod));
-
+                
+                const hammaddeSnap = await db.collection("hammaddeler").get();
+                HAMMADDELER = {};
+                if (hammaddeSnap.empty) {
+                    const defaultHammaddeler = [
+                        { kod: 'ABS', ad: 'Akrilonitril' },
+                        { kod: 'ABS FR', ad: 'Yanmaz ABS' },
+                        { kod: 'PA', ad: 'Poliamid' },
+                        { kod: 'PC', ad: 'Polikarbon' },
+                        { kod: 'PMMA', ad: 'Akrilik' },
+                        { kod: 'POM', ad: 'Polioksimetilen' },
+                        { kod: 'PP', ad: 'Polipropilen' },
+                        { kod: 'PS', ad: 'Kristal' }
+                    ];
+                    for (const h of defaultHammaddeler) {
+                        await firebaseKaydet("hammaddeler", h.kod, { ad: h.ad });
+                        HAMMADDELER[h.kod] = h.ad;
+                    }
+                } else {
+                    hammaddeSnap.forEach(d => { 
+                        const data = d.data();
+                        HAMMADDELER[d.id] = data.ad || d.id;
+                    });
+                }
+                
                 const tatilSnap = await db.collection("tatil_gunleri").get();
                 TATIL_GUNLERI = [];
                 tatilSnap.forEach(d => { TATIL_GUNLERI.push(d.id); });
-
                 const mesaiSnap = await db.collection("mesai_gunleri").get();
                 MESAI_GUNLERI = [];
                 mesaiSnap.forEach(d => { MESAI_GUNLERI.push(d.id); });
-
                 const uretimSnap = await db.collection("uretim_kayitlari").get();
                 dbMock = [];
                 uretimSnap.forEach(d => { dbMock.push({ id: d.id, ...d.data() }); });
-
                 dataLoaded = true;
             } catch (e) { console.error("Veri yükleme hatası:", e); }
             finally { showLoading(false); }
@@ -803,15 +1011,6 @@
                 }
                 return null;
             } catch (e) { return null; }
-        }
-
-        async function cacheUrunBilgileri() {
-            window._urunBilgisiCache = {};
-            const urunKodlari = [...new Set(dbMock.map(k => k.urunKodu))];
-            for (const kod of urunKodlari) {
-                const bilgi = await urunBilgisiGetir(kod);
-                if (bilgi) window._urunBilgisiCache[kod] = bilgi;
-            }
         }
 
         function githubResimUrl(kod) {
@@ -874,11 +1073,30 @@
             });
         }
 
+        window.populateHammaddeSelect = function(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            const currentValue = select.value;
+            select.innerHTML = "";
+            if (selectId === 'opHammadde' || selectId === 'newProductHammadde') {
+                const defaultOpt = document.createElement("option");
+                defaultOpt.value = "";
+                defaultOpt.innerText = "Seçiniz...";
+                select.appendChild(defaultOpt);
+            }
+            Object.keys(HAMMADDELER).sort().forEach(kod => {
+                const opt = document.createElement("option");
+                opt.value = kod;
+                opt.innerText = `${kod} – ${HAMMADDELER[kod]}`;
+                select.appendChild(opt);
+            });
+            if (currentValue) select.value = currentValue;
+        }
+
         window.login = async function() {
             const user = document.getElementById("username").value.trim();
             const pass = document.getElementById("password").value.trim();
             if (!dataLoaded) await verileriYukle();
-
             if (USERS[user] && USERS[user].pass === pass) {
                 currentUser = { username: user, ...USERS[user] };
                 if (currentUser.role === "admin") {
@@ -904,34 +1122,25 @@
             input.value = input.value.toUpperCase(); 
             const kod = input.value.trim();
             const kart = document.getElementById("opAutoProductCard");
-            
-            if (kod.length < 2) { 
-                kart.classList.add("hidden"); 
-                return; 
-            }
-            
+            if (kod.length < 2) { kart.classList.add("hidden"); return; }
             const urunBilgisi = await urunBilgisiGetir(kod);
-            
             if (urunBilgisi) {
                 document.getElementById("opAutoProductName").innerText = urunBilgisi.urunAdi;
                 document.getElementById("opAutoProductCode").innerText = kod;
-                
                 const img = document.getElementById("opAutoProductImg");
                 img.src = githubResimUrl(kod);
                 img.onerror = function() { this.style.display='none'; };
-                
                 const birimGramaj = urunBilgisi.hedefBaskiGramaji || 0;
                 const gozSayisi = urunBilgisi.hedefKalipGozSayisi || 0;
                 const hedefToplam = birimGramaj * gozSayisi;
                 const cevirim = urunBilgisi.hedefCevrimSuresi || 0;
                 const hammadde = urunBilgisi.hedefHammadde || '-';
-                
                 document.getElementById("refBirimGramaj").innerText = birimGramaj > 0 ? birimGramaj.toFixed(2) + " gr" : "-";
                 document.getElementById("refGozSayisi").innerText = gozSayisi > 0 ? gozSayisi : "-";
                 document.getElementById("refHedefToplam").innerText = hedefToplam > 0 ? hedefToplam.toFixed(2) + " gr" : "-";
                 document.getElementById("refCevrim").innerText = cevirim > 0 ? cevirim + " sn" : "-";
-                document.getElementById("refHammadde").innerText = hammadde !== '-' ? hammadde + ' (' + (HAMMADDE_ADLARI[hammadde] || '') + ')' : '-';
-                
+                const hammaddeAd = HAMMADDELER[hammadde] || hammadde;
+                document.getElementById("refHammadde").innerText = hammadde !== '-' ? hammadde + ' (' + hammaddeAd + ')' : '-';
                 kart.classList.remove("hidden");
             } else {
                 kart.classList.add("hidden");
@@ -945,7 +1154,7 @@
                 !k.rawBitis && (k.username === currentUser.username || k.suAnkiSorumlu === currentUser.username)
             );
             if (isler.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="16" class="p-6 text-center text-gray-500">Aktif iş yok. "Yeni İş" butonuna basarak başlayın.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="17" class="p-6 text-center text-gray-500">Aktif iş yok. "Yeni İş" butonuna basarak başlayın.</td></tr>`;
                 return;
             }
             isler.forEach(kayit => {
@@ -984,7 +1193,7 @@
                 }
                 
                 const hammaddeKisaltma = kayit.hammadde || '-';
-                const hammaddeTamAd = HAMMADDE_ADLARI[kayit.hammadde] || '';
+                const hammaddeTamAd = HAMMADDELER[kayit.hammadde] || kayit.hammadde || '';
                 
                 const baskiUrunHucresi = `<td class="p-2 text-center">
                     <div class="font-mono text-[11px]">${kayit.toplamBaski.toLocaleString('tr-TR')} baskı</div>
@@ -999,10 +1208,11 @@
                     const cevirimSapma = hedefCevrim > 0 && kayit.baskiSuresi > 0 ? ((kayit.baskiSuresi - hedefCevrim) / hedefCevrim) * 100 : null;
                     const gercekGramaj = kayit.baskiGramaji || 0;
                     const gramajSapma = hedefToplamGramaj > 0 && gercekGramaj > 0 ? ((gercekGramaj - hedefToplamGramaj) / hedefToplamGramaj) * 100 : null;
-                    
-                    cevirimSapmaHtml = getSapmaCell(cevirimSapma, hedefCevrim, kayit.baskiSuresi || 0, 'sn');
-                    gramajSapmaHtml = getSapmaCell(gramajSapma, hedefToplamGramaj, gercekGramaj, 'gr');
+                    cevirimSapmaHtml = getSapmaCell(cevirimSapma, hedefCevrim, kayit.baskiSuresi || 0, 'sn', 'Hedef', 'Gerçek');
+                    gramajSapmaHtml = getSapmaCell(gramajSapma, hedefToplamGramaj, gercekGramaj, 'gr', 'Hedef (yolluksuz)', 'Gerçek (yolluklu)');
                 }
+                
+                const tahminiBitisHtml = getTahminiBitisHtml(kayit);
                 
                 const aciklamaHtml = (kayit.aciklamalar || []).map(a => 
                     `<div class="bg-gray-50 p-1 rounded my-0.5 border-l-2 border-blue-500 text-[10px]">• ${a}</div>`
@@ -1034,6 +1244,7 @@
                         <div>${gramajSapmaHtml}</div>
                     </td>
                     <td class="p-2 text-[10px]">${kayit.baslangic}</td>
+                    <td class="p-2 text-center">${tahminiBitisHtml}</td>
                     <td class="p-2 max-w-xs text-[10px]">
                         ${aciklamaHtml}
                         <button onclick="window.aciklamaEkle('${kayit.id}')" class="mt-1 text-blue-500 hover:underline text-[10px] font-semibold">+ Not</button>
@@ -1067,9 +1278,7 @@
             const kayit = dbMock.find(x => String(x.id) === String(kayitId));
             if (!kayit) return;
             const toplamGramaj = yeniGramaj * kayit.toplamBaski;
-            await firebaseGuncelle("uretim_kayitlari", kayitId, {
-                baskiGramaji: yeniGramaj, toplamGramaj: toplamGramaj
-            });
+            await firebaseGuncelle("uretim_kayitlari", kayitId, { baskiGramaji: yeniGramaj, toplamGramaj: toplamGramaj });
             if (!kayit.aciklamalar) kayit.aciklamalar = [];
             const ts = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
             const yeniAciklama = [...kayit.aciklamalar, `[Gramaj - ${ts}] ${currentUser.name}: ${yeniGramaj} gr`];
@@ -1080,7 +1289,6 @@
         window.uretimiBitir = async function(id) {
             const kayit = dbMock.find(x => String(x.id) === String(id));
             if (!kayit) return;
-            
             if (!kayit.baskiSuresi || kayit.baskiSuresi <= 0) {
                 alert("⛔ Çevrim süresi girilmeden iş bitirilemez!\n\nÖnce tablodan çevrim süresi bilgisini giriniz.");
                 return;
@@ -1090,17 +1298,13 @@
                 return;
             }
             if (!confirm("Bu işi bitirmek istediğinize emin misiniz?")) return;
-            
             const urunBilgisi = await urunBilgisiGetir(kayit.urunKodu);
-            let gramajSapma = null;
-            let cevirimSapma = null;
-            
+            let gramajSapma = null, cevirimSapma = null;
             if (urunBilgisi) {
                 const hedefToplamGramaj = urunBilgisi.hedefBaskiGramaji * urunBilgisi.hedefKalipGozSayisi;
                 gramajSapma = hedefToplamGramaj > 0 ? ((kayit.baskiGramaji - hedefToplamGramaj) / hedefToplamGramaj) * 100 : null;
                 cevirimSapma = urunBilgisi.hedefCevrimSuresi > 0 ? ((kayit.baskiSuresi - urunBilgisi.hedefCevrimSuresi) / urunBilgisi.hedefCevrimSuresi) * 100 : null;
             }
-            
             const simdi = new Date();
             const tzoffset = simdi.getTimezoneOffset() * 60000; 
             const yerelZamanStr = (new Date(simdi.getTime() - tzoffset)).toISOString().slice(0, 16);
@@ -1109,29 +1313,21 @@
             const netMesai = netCalismaSuresiHesapla(kayit.rawBaslangic, yerelZamanStr);
             const teorik = Math.round((kayit.toplamBaski * kayit.baskiSuresi) / 60);
             const bosta = netMesai - teorik;
-            
             await firebaseGuncelle("uretim_kayitlari", id, {
-                rawBitis: yerelZamanStr, bitis: bitisStr,
-                aciklamalar: yeniAciklama,
-                netCalismaDk: netMesai, teorikSureDk: teorik,
-                bostaZamanDk: bosta > 0 ? bosta : 0,
-                gramajSapma: gramajSapma,
-                cevirimSapma: cevirimSapma
+                rawBitis: yerelZamanStr, bitis: bitisStr, aciklamalar: yeniAciklama,
+                netCalismaDk: netMesai, teorikSureDk: teorik, bostaZamanDk: bosta > 0 ? bosta : 0,
+                gramajSapma: gramajSapma, cevirimSapma: cevirimSapma
             });
-            
             let sapmaMesaj = "";
             if (gramajSapma !== null) sapmaMesaj += `\n📊 Gramaj Sapması: ${gramajSapma > 0 ? '+' : ''}${gramajSapma.toFixed(1)}%`;
             if (cevirimSapma !== null) sapmaMesaj += `\n⏱️ Çevrim Sapması: ${cevirimSapma > 0 ? '+' : ''}${cevirimSapma.toFixed(1)}%`;
-            
             alert("✅ İş bitirildi!" + sapmaMesaj);
         }
 
         window.loadOpCompletedJobs = function() {
             const tbody = document.getElementById("opCompletedTable");
             tbody.innerHTML = "";
-            const isler = dbMock.filter(k => 
-                k.rawBitis && (k.username === currentUser.username || k.bitirenOperatör === currentUser.name)
-            );
+            const isler = dbMock.filter(k => k.rawBitis && (k.username === currentUser.username || k.bitirenOperatör === currentUser.name));
             if (isler.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="13" class="p-6 text-center text-gray-500">Henüz biten iş yok.</td></tr>`;
                 return;
@@ -1139,13 +1335,11 @@
             isler.forEach(kayit => {
                 const toplamGramaj = (kayit.baskiGramaji || 0) * kayit.toplamBaski;
                 const hammaddeKisaltma = kayit.hammadde || '-';
-                const hammaddeTamAd = HAMMADDE_ADLARI[kayit.hammadde] || '';
-                
+                const hammaddeTamAd = HAMMADDELER[kayit.hammadde] || kayit.hammadde || '';
                 const baskiUrunHucresi = `<td class="p-2 text-center">
                     <div class="font-mono text-[11px]">${kayit.toplamBaski.toLocaleString('tr-TR')} baskı</div>
                     <div class="font-bold text-purple-700 text-[11px]">${kayit.toplamUrunSayisi.toLocaleString('tr-TR')} ürün</div>
                 </td>`;
-                
                 const urunBilgisi = window._urunBilgisiCache && window._urunBilgisiCache[kayit.urunKodu];
                 let sapmaHtml = '<span class="text-gray-400 italic">-</span>';
                 if (urunBilgisi) {
@@ -1153,11 +1347,10 @@
                     const hedefCevrim = urunBilgisi.hedefCevrimSuresi;
                     const gramajSapma = hedefToplamGramaj > 0 && kayit.baskiGramaji > 0 ? ((kayit.baskiGramaji - hedefToplamGramaj) / hedefToplamGramaj) * 100 : null;
                     const cevirimSapma = hedefCevrim > 0 && kayit.baskiSuresi > 0 ? ((kayit.baskiSuresi - hedefCevrim) / hedefCevrim) * 100 : null;
-                    const cevirimCell = getSapmaCell(cevirimSapma, hedefCevrim, kayit.baskiSuresi || 0, 'sn');
-                    const gramajCell = getSapmaCell(gramajSapma, hedefToplamGramaj, kayit.baskiGramaji || 0, 'gr');
+                    const cevirimCell = getSapmaCell(cevirimSapma, hedefCevrim, kayit.baskiSuresi || 0, 'sn', 'Hedef', 'Gerçek');
+                    const gramajCell = getSapmaCell(gramajSapma, hedefToplamGramaj, kayit.baskiGramaji || 0, 'gr', 'Hedef (yolluksuz)', 'Gerçek (yolluklu)');
                     sapmaHtml = `<div class="mb-1">${cevirimCell}</div><div>${gramajCell}</div>`;
                 }
-                
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-gray-50";
                 tr.innerHTML = `
@@ -1206,11 +1399,7 @@
         window.kayitDuzenleHazirla = function(id) {
             const kayit = dbMock.find(x => String(x.id) === String(id));
             if (!kayit) return;
-            if (!duzenlemeYetkisiVar(kayit)) {
-                alert("Bu kaydı düzenleme yetkiniz yok!");
-                return;
-            }
-            
+            if (!duzenlemeYetkisiVar(kayit)) { alert("Bu kaydı düzenleme yetkiniz yok!"); return; }
             editModeId = id;
             document.getElementById("opMakine").value = kayit.makine;
             document.getElementById("opHammadde").value = kayit.hammadde || "";
@@ -1223,13 +1412,10 @@
             document.getElementById("opIlkAciklama").value = "";
             document.getElementById("opIlkAciklama").placeholder = "Düzenleme notu...";
             window.toplamUrunHesapla();
-            
             window.urunKoduDegisti({ value: kayit.urunKodu });
-            
             const submitBtn = document.getElementById('kaydetBtn');
             submitBtn.innerText = "💾 Değişiklikleri Kaydet";
             submitBtn.onclick = window.kaydet;
-            
             window.showPage('opFormPage');
         };
 
@@ -1243,24 +1429,12 @@
             const baslangic = document.getElementById("opBaslangic").value;
             const bitis = document.getElementById("opBitis").value;
             const ilkAciklama = document.getElementById("opIlkAciklama").value.trim();
-
-            if (!urunKodu || !gozSayisi || !toplamBaski || !baslangic) {
-                alert("Lütfen tüm zorunlu alanları doldurun!");
-                return;
-            }
-            if (!hammadde) {
-                alert("Lütfen hammadde seçin!");
-                return;
-            }
+            if (!urunKodu || !gozSayisi || !toplamBaski || !baslangic) { alert("Lütfen tüm zorunlu alanları doldurun!"); return; }
+            if (!hammadde) { alert("Lütfen hammadde seçin!"); return; }
             const urunBilgisi = await urunBilgisiGetir(urunKodu);
             const urunAdi = urunBilgisi ? urunBilgisi.urunAdi : "Manuel Tanımlı";
             let netCalismaDk = 0, teorikSureDk = 0, bostaZamanDk = 0;
-            if (bitis) {
-                netCalismaDk = netCalismaSuresiHesapla(baslangic, bitis);
-                teorikSureDk = 0;
-                bostaZamanDk = 0;
-            }
-            
+            if (bitis) { netCalismaDk = netCalismaSuresiHesapla(baslangic, bitis); }
             if (editModeId) {
                 const guncellenecek = {
                     makine, hammadde, urunKodu, urunAdi, renk, gozSayisi, toplamBaski,
@@ -1270,7 +1444,6 @@
                     netCalismaDk, teorikSureDk, bostaZamanDk
                 };
                 await firebaseGuncelle("uretim_kayitlari", editModeId, guncellenecek);
-                
                 if (ilkAciklama) {
                     const kayit = dbMock.find(x => String(x.id) === String(editModeId));
                     if (kayit) {
@@ -1278,7 +1451,6 @@
                         await firebaseGuncelle("uretim_kayitlari", editModeId, { aciklamalar: yeniAciklama });
                     }
                 }
-                
                 alert("✅ Kayıt güncellendi.");
                 editModeId = null;
             } else {
@@ -1298,7 +1470,6 @@
                 await db.collection("uretim_kayitlari").add(yeniKayit);
                 alert("✅ İş kaydedildi!");
             }
-            
             document.getElementById("opUrunKodu").value = "";
             document.getElementById("opHammadde").value = "";
             document.getElementById("opRenk").value = "Belirtilmedi";
@@ -1310,11 +1481,9 @@
             document.getElementById("opIlkAciklama").placeholder = "";
             document.getElementById("opLblToplamUrun").innerText = "0 Adet";
             document.getElementById("opAutoProductCard").classList.add("hidden");
-            
             const submitBtn = document.getElementById('kaydetBtn');
             submitBtn.innerText = "💾 Kaydet ve Aktif İşlere Dön";
             submitBtn.onclick = window.kaydet;
-            
             window.showPage('opActivePage');
         }
 
@@ -1327,7 +1496,6 @@
             const fMakine = document.getElementById("filterMakine")?.value || "";
             const fUrun = (document.getElementById("filterUrun")?.value || "").toLowerCase();
             const fTarih = document.getElementById("filterTarih")?.value || "";
-
             let filtreli = dbMock.filter(k => {
                 const matchSearch = !fSearch || `${k.urunKodu} ${k.urunAdi} ${k.ekleyen} ${k.hammadde || ''} ${k.renk || ''}`.toLowerCase().includes(fSearch);
                 const matchEleman = !fEleman || k.ekleyen.toLowerCase().includes(fEleman);
@@ -1337,7 +1505,6 @@
                 return matchSearch && matchEleman && matchMakine && matchUrun && matchTarih;
             });
             filtreli.sort((a, b) => new Date(b.rawBaslangic) - new Date(a.rawBaslangic));
-
             let toplamBaskiGenel = 0, toplamUrunGenel = 0, toplamNetCalismaDk = 0, toplamGramajGenel = 0;
             filtreli.forEach(k => {
                 toplamBaskiGenel += k.toplamBaski || 0;
@@ -1350,8 +1517,7 @@
                 const gramajGirilmemis = !k.baskiGramaji || k.baskiGramaji <= 0;
                 const sureGirilmemis = !k.baskiSuresi || k.baskiSuresi <= 0;
                 const hammaddeKisaltma = k.hammadde || '-';
-                const hammaddeTamAd = HAMMADDE_ADLARI[k.hammadde] || '';
-                
+                const hammaddeTamAd = HAMMADDELER[k.hammadde] || k.hammadde || '';
                 let gramajHucresi = "";
                 if (gramajGirilmemis && yetkiVar) {
                     gramajHucresi = `<td class="p-2 text-center">
@@ -1365,7 +1531,6 @@
                 } else {
                     gramajHucresi = `<td class="p-2 text-center text-gray-400 italic">-</td>`;
                 }
-                
                 let sureHucresi = "";
                 if (sureGirilmemis && yetkiVar) {
                     sureHucresi = `<td class="p-2 text-center">
@@ -1379,12 +1544,10 @@
                 } else {
                     sureHucresi = `<td class="p-2 text-center text-gray-400 italic">-</td>`;
                 }
-                
                 const baskiUrunHucresi = `<td class="p-2 text-center">
                     <div class="font-mono text-[11px]">${k.toplamBaski.toLocaleString('tr-TR')} baskı</div>
                     <div class="font-bold text-purple-700 text-[11px]">${k.toplamUrunSayisi.toLocaleString('tr-TR')} ürün</div>
                 </td>`;
-                
                 const urunBilgisi = window._urunBilgisiCache && window._urunBilgisiCache[k.urunKodu];
                 let sapmaHtml = '<span class="text-gray-400 italic">-</span>';
                 if (urunBilgisi) {
@@ -1392,11 +1555,11 @@
                     const hedefCevrim = urunBilgisi.hedefCevrimSuresi;
                     const gramajSapma = hedefToplamGramaj > 0 && k.baskiGramaji > 0 ? ((k.baskiGramaji - hedefToplamGramaj) / hedefToplamGramaj) * 100 : null;
                     const cevirimSapma = hedefCevrim > 0 && k.baskiSuresi > 0 ? ((k.baskiSuresi - hedefCevrim) / hedefCevrim) * 100 : null;
-                    const cevirimCell = getSapmaCell(cevirimSapma, hedefCevrim, k.baskiSuresi || 0, 'sn');
-                    const gramajCell = getSapmaCell(gramajSapma, hedefToplamGramaj, k.baskiGramaji || 0, 'gr');
+                    const cevirimCell = getSapmaCell(cevirimSapma, hedefCevrim, k.baskiSuresi || 0, 'sn', 'Hedef', 'Gerçek');
+                    const gramajCell = getSapmaCell(gramajSapma, hedefToplamGramaj, k.baskiGramaji || 0, 'gr', 'Hedef (yolluksuz)', 'Gerçek (yolluklu)');
                     sapmaHtml = `<div class="mb-1">${cevirimCell}</div><div>${gramajCell}</div>`;
                 }
-                
+                const tahminiBitisHtml = getTahminiBitisHtml(k);
                 let bitisTd = "", netHucresi = "", bostaHucresi = "";
                 let aktarBtn = "", duzenleBtn = "", bitirBtn = "";
                 if (k.rawBitis) {
@@ -1404,7 +1567,7 @@
                     netHucresi = `<span class="font-bold text-green-700">${formatDakikaSaat(k.netCalismaDk || 0)}</span>`;
                     bostaHucresi = `<span class="text-gray-500 text-[10px]">H: ${formatDakikaSaat(k.teorikSureDk || 0)}</span><br><span class="text-red-600 font-bold text-[10px]">B: ${formatDakikaSaat(k.bostaZamanDk || 0)}</span>`;
                 } else {
-                    bitisTd = `<td class="p-2"><span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-[10px] font-semibold animate-pulse-fast"> Aktif</span></td>`;
+                    bitisTd = `<td class="p-2"><span class="bg-green-100 text-green-800 px-1.5 py-0.5 rounded text-[10px] font-semibold animate-pulse-fast">🟢 Aktif</span></td>`;
                     netHucresi = `<span class="text-gray-400 italic text-[10px]">-</span>`;
                     bostaHucresi = `<span class="text-gray-400 italic text-[10px]">-</span>`;
                     aktarBtn = `<button onclick="window.isAktarAyarla('${k.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold mb-1 w-full">🔄 Aktar</button>`;
@@ -1431,32 +1594,29 @@
                     <td class="p-2 text-center">${sapmaHtml}</td>
                     <td class="p-2 text-[10px]">${k.baslangic}</td>
                     ${bitisTd}
+                    <td class="p-2 text-center">${tahminiBitisHtml}</td>
                     <td class="p-2 text-[11px]">${netHucresi}</td>
                     <td class="p-2 text-[10px]">${bostaHucresi}</td>
                     <td class="p-2 max-w-xs text-[10px]">${(k.aciklamalar || []).map(a => `<div class="bg-gray-50 p-1 rounded my-0.5 border-l-2 border-blue-500">• ${a}</div>`).join('')}
                         <button onclick="window.aciklamaEkle('${k.id}')" class="mt-1 text-blue-500 hover:underline text-[10px]">+ Not</button>
                     </td>
                     <td class="p-2 text-center w-24">
-                        ${aktarBtn}
-                        ${duzenleBtn}
-                        ${bitirBtn}
+                        ${aktarBtn}${duzenleBtn}${bitirBtn}
                         ${k.rawBitis ? `<button onclick="window.kayitSil('${k.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold w-full">Sil</button>` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
             const tfoot = document.getElementById("masterMainFooter");
-            tfoot.innerHTML = `
-                <tr class="bg-gray-200 text-gray-800 font-bold">
-                    <td class="p-2" colspan="9">📊 Toplam (${filtreli.length} kayıt)</td>
-                    <td class="p-2 text-center font-mono">${toplamBaskiGenel.toLocaleString('tr-TR')} baskı</td>
-                    <td class="p-2 text-center font-mono text-purple-800">${toplamUrunGenel.toLocaleString('tr-TR')} ürün</td>
-                    <td class="p-2 text-center font-mono text-orange-800">${gramajFormatla(toplamGramajGenel)}</td>
-                    <td colspan="4"></td>
-                    <td class="p-2 text-xs text-green-800">${formatDakikaSaat(toplamNetCalismaDk)}</td>
-                    <td colspan="3"></td>
-                </tr>
-            `;
+            tfoot.innerHTML = `<tr class="bg-gray-200 text-gray-800 font-bold">
+                <td class="p-2" colspan="10">📊 Toplam (${filtreli.length} kayıt)</td>
+                <td class="p-2 text-center font-mono">${toplamBaskiGenel.toLocaleString('tr-TR')} baskı</td>
+                <td class="p-2 text-center font-mono text-purple-800">${toplamUrunGenel.toLocaleString('tr-TR')} ürün</td>
+                <td class="p-2 text-center font-mono text-orange-800">${gramajFormatla(toplamGramajGenel)}</td>
+                <td colspan="4"></td>
+                <td class="p-2 text-xs text-green-800">${formatDakikaSaat(toplamNetCalismaDk)}</td>
+                <td colspan="3"></td>
+            </tr>`;
         }
 
         window.gramajKaydetMaster = async function(kayitId) { await window.gramajKaydet(kayitId); }
@@ -1472,12 +1632,7 @@
                 await firebaseGuncelle("uretim_kayitlari", id, { aciklamalar: yeniAciklama });
             }
         }
-
-        window.kayitSil = async function(id) {
-            if (confirm("Bu kayıt silinsin mi?")) {
-                await firebaseSil("uretim_kayitlari", id);
-            }
-        }
+        window.kayitSil = async function(id) { if (confirm("Bu kayıt silinsin mi?")) await firebaseSil("uretim_kayitlari", id); }
 
         window.isAktarAyarla = function(id) {
             const kayit = dbMock.find(x => String(x.id) === String(id));
@@ -1489,19 +1644,14 @@
             Object.keys(USERS).forEach(u => {
                 if (USERS[u].role === "worker" && u !== kayit.suAnkiSorumlu) {
                     const opt = document.createElement("option");
-                    opt.value = u;
-                    opt.innerText = USERS[u].name;
-                    selectEl.appendChild(opt);
-                    count++;
+                    opt.value = u; opt.innerText = USERS[u].name;
+                    selectEl.appendChild(opt); count++;
                 }
             });
             if (count === 0) { alert("Başka operatör yok!"); return; }
             document.getElementById("transferModal").classList.remove("hidden");
         }
-        window.isAktarModalKapat = function() {
-            document.getElementById("transferModal").classList.add("hidden");
-            activeTransferId = null;
-        }
+        window.isAktarModalKapat = function() { document.getElementById("transferModal").classList.add("hidden"); activeTransferId = null; }
         window.isAktarModalOnayla = async function() {
             if (!activeTransferId) return;
             const kayit = dbMock.find(x => String(x.id) === String(activeTransferId));
@@ -1509,9 +1659,7 @@
             if (kayit && USERS[secilen]) {
                 const ts = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
                 const yeniAciklama = [...(kayit.aciklamalar || []), `[İş Devri - ${ts}] ${USERS[secilen].name}'e devredildi.`];
-                await firebaseGuncelle("uretim_kayitlari", activeTransferId, {
-                    suAnkiSorumlu: secilen, aciklamalar: yeniAciklama
-                });
+                await firebaseGuncelle("uretim_kayitlari", activeTransferId, { suAnkiSorumlu: secilen, aciklamalar: yeniAciklama });
                 alert(`İş ${USERS[secilen].name}'e aktarıldı.`);
                 window.isAktarModalKapat();
             }
@@ -1536,56 +1684,30 @@
             const tbody = document.getElementById("operatorListTable");
             if (!tbody) return;
             tbody.innerHTML = "";
-            
             const allUsers = Object.keys(USERS);
             const adminUsers = allUsers.filter(u => USERS[u].role === "admin");
             const workerUsers = allUsers.filter(u => USERS[u].role === "worker");
             const sirali = [...adminUsers, ...workerUsers];
-            
-            if (sirali.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Kullanıcı yok.</td></tr>`;
-                return;
-            }
-            
+            if (sirali.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Kullanıcı yok.</td></tr>`; return; }
             sirali.forEach(username => {
                 const user = USERS[username];
                 const isAdmin = user.role === "admin";
-                
-                opOriginalValues[username] = {
-                    name: user.name,
-                    username: username,
-                    pass: user.pass
-                };
-                
+                opOriginalValues[username] = { name: user.name, username: username, pass: user.pass };
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-gray-50";
                 tr.dataset.username = username;
-                
                 const rowBg = isAdmin ? "bg-indigo-50" : "";
-                const roleBadge = isAdmin 
-                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">ADMIN</span>`
-                    : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-800">WORKER</span>`;
-                
-                const silButon = isAdmin 
-                    ? `<span class="text-gray-400 italic text-[10px]">Sistem</span>`
-                    : `<button onclick="window.operatorSil('${username}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold hover:bg-red-600">🗑️ Sil</button>`;
-                
+                const roleBadge = isAdmin ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">ADMIN</span>` : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-800">WORKER</span>`;
+                const silButon = isAdmin ? `<span class="text-gray-400 italic text-[10px]">Sistem</span>` : `<button onclick="window.operatorSil('${username}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold hover:bg-red-600">🗑️ Sil</button>`;
                 tr.innerHTML = `
-                    <td class="p-2 ${rowBg}">
-                        <input type="text" id="op-name-${username}" value="${user.name}" oninput="window.opFieldChanged('${username}')" class="op-input ${isAdmin ? 'bg-indigo-50' : ''}">
-                    </td>
-                    <td class="p-2 ${rowBg}">
-                        <input type="text" id="op-user-${username}" value="${username}" oninput="window.opFieldChanged('${username}')" class="op-input font-mono ${isAdmin ? 'bg-indigo-50' : ''}">
-                    </td>
-                    <td class="p-2 ${rowBg}">
-                        <input type="text" id="op-pass-${username}" value="${user.pass}" oninput="window.opFieldChanged('${username}')" class="op-input ${isAdmin ? 'bg-indigo-50' : ''}">
-                    </td>
+                    <td class="p-2 ${rowBg}"><input type="text" id="op-name-${username}" value="${user.name}" oninput="window.opFieldChanged('${username}')" class="op-input ${isAdmin ? 'bg-indigo-50' : ''}"></td>
+                    <td class="p-2 ${rowBg}"><input type="text" id="op-user-${username}" value="${username}" oninput="window.opFieldChanged('${username}')" class="op-input font-mono ${isAdmin ? 'bg-indigo-50' : ''}"></td>
+                    <td class="p-2 ${rowBg}"><input type="text" id="op-pass-${username}" value="${user.pass}" oninput="window.opFieldChanged('${username}')" class="op-input ${isAdmin ? 'bg-indigo-50' : ''}"></td>
                     <td class="p-2 ${rowBg}">${roleBadge}</td>
                     <td class="p-2 ${rowBg} text-center">
                         <button onclick="window.operatorKaydet('${username}')" id="op-save-${username}" class="bg-green-600 text-white px-2 py-1 rounded text-[10px] font-semibold hover:bg-green-700 mr-1 hidden">💾 Kaydet</button>
                         ${silButon}
-                    </td>
-                `;
+                    </td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -1616,14 +1738,12 @@
             if (newUsername.length < 3) { alert("Kullanıcı adı en az 3 karakter olmalı!"); return; }
             const usernameChanged = newUsername !== username;
             if (usernameChanged && USERS[newUsername]) { alert(`"${newUsername}" kullanıcı adı zaten kullanılıyor!`); return; }
-            
             try {
                 if (usernameChanged) {
                     await firebaseKaydet("kullanicilar", newUsername, { pass: newPass, role: USERS[username].role, name: newName });
                     await firebaseSil("kullanicilar", username);
                     if (currentUser && currentUser.username === username) {
-                        currentUser.username = newUsername;
-                        currentUser.name = newName;
+                        currentUser.username = newUsername; currentUser.name = newName;
                         document.getElementById("masterNameDisplay").innerText = newName;
                     }
                     alert(`✅ Kullanıcı adı "${username}" → "${newUsername}" olarak değiştirildi.`);
@@ -1635,10 +1755,7 @@
                     }
                     alert("✅ Bilgiler güncellendi.");
                 }
-            } catch (e) {
-                console.error(e);
-                alert("❌ Hata: " + e.message);
-            }
+            } catch (e) { console.error(e); alert("❌ Hata: " + e.message); }
         }
 
         window.operatorSil = async function(username) {
@@ -1658,7 +1775,6 @@
             document.getElementById("newMachineCode").value = "";
             document.getElementById("newMachineName").value = "";
         }
-
         window.makineAdiniDegistir = async function(kod) {
             const makine = MAKINALAR.find(m => m.kod === kod);
             if (!makine) return;
@@ -1667,37 +1783,79 @@
             await firebaseGuncelle("makinalar", kod, { ad: yeniAd.trim() });
             alert("✅ Makine adı güncellendi.");
         }
-
         window.makineSil = async function(kod) {
             const kullanim = dbMock.filter(k => k.makine === kod);
-            if (kullanim.length > 0) {
-                if (!confirm(`⚠️ Bu makine ${kullanim.length} kayıtta kullanılıyor!\n\nYine de silmek istiyor musunuz?`)) return;
-            } else {
-                if (!confirm(`"${kod}" kodlu makine silinsin mi?`)) return;
-            }
+            if (kullanim.length > 0) { if (!confirm(`⚠️ Bu makine ${kullanim.length} kayıtta kullanılıyor!\n\nYine de silmek istiyor musunuz?`)) return; }
+            else { if (!confirm(`"${kod}" kodlu makine silinsin mi?`)) return; }
             await firebaseSil("makinalar", kod);
             alert("Makine silindi.");
         }
-
         window.makineTablosunuYenile = function() {
             const tbody = document.getElementById("machineListTable");
             if (!tbody) return;
             tbody.innerHTML = "";
-            if (MAKINALAR.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">Makine yok.</td></tr>`;
-                return;
-            }
+            if (MAKINALAR.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">Makine yok.</td></tr>`; return; }
             MAKINALAR.forEach(m => {
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-gray-50";
-                tr.innerHTML = `
-                    <td class="p-2 font-mono font-bold text-blue-700">${m.kod}</td>
-                    <td class="p-2">${m.ad}</td>
+                tr.innerHTML = `<td class="p-2 font-mono font-bold text-blue-700">${m.kod}</td><td class="p-2">${m.ad}</td>
                     <td class="p-2 text-center">
                         <button onclick="window.makineAdiniDegistir('${m.kod}')" class="bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-semibold mr-1">✏️ Düzenle</button>
                         <button onclick="window.makineSil('${m.kod}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold">🗑️ Sil</button>
-                    </td>
-                `;
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ========== HAMMADDE YÖNETİMİ ==========
+        window.hammaddeEkle = async function() {
+            const kod = document.getElementById("newHammaddeKod").value.trim().toUpperCase();
+            const ad = document.getElementById("newHammaddeAd").value.trim();
+            if (!kod || !ad) { alert("Kod ve ad girin!"); return; }
+            if (HAMMADDELER[kod]) { alert("Bu hammadde kodu zaten var!"); return; }
+            await firebaseKaydet("hammaddeler", kod, { ad: ad });
+            alert(`✅ ${ad} (${kod}) eklendi.`);
+            document.getElementById("newHammaddeKod").value = "";
+            document.getElementById("newHammaddeAd").value = "";
+        }
+
+        window.hammaddeAdiniDegistir = async function(kod) {
+            const mevcutAd = HAMMADDELER[kod] || kod;
+            const yeniAd = prompt(`"${kod}" (${mevcutAd}) için yeni ad:`, mevcutAd);
+            if (!yeniAd || !yeniAd.trim()) return;
+            await firebaseGuncelle("hammaddeler", kod, { ad: yeniAd.trim() });
+            alert("✅ Hammadde adı güncellendi.");
+        }
+
+        window.hammaddeSil = async function(kod) {
+            const kullanim = dbMock.filter(k => k.hammadde === kod);
+            if (kullanim.length > 0) {
+                if (!confirm(`⚠️ Bu hammadde ${kullanim.length} kayıtta kullanılıyor!\n\nYine de silmek istiyor musunuz?`)) return;
+            } else {
+                if (!confirm(`"${kod}" kodlu hammadde silinsin mi?`)) return;
+            }
+            await firebaseSil("hammaddeler", kod);
+            alert("Hammadde silindi.");
+        }
+
+        window.hammaddeTablosunuYenile = function() {
+            const tbody = document.getElementById("hammaddeListTable");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            const hammaddeler = Object.keys(HAMMADDELER).sort();
+            if (hammaddeler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">Hammadde yok.</td></tr>`;
+                return;
+            }
+            hammaddeler.forEach(kod => {
+                const ad = HAMMADDELER[kod];
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `<td class="p-2 font-mono font-bold text-amber-700">${kod}</td><td class="p-2">${ad}</td>
+                    <td class="p-2 text-center">
+                        <button onclick="window.hammaddeAdiniDegistir('${kod}')" class="bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-semibold mr-1">✏️ Düzenle</button>
+                        <button onclick="window.hammaddeSil('${kod}')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-semibold">🗑️ Sil</button>
+                    </td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -1711,20 +1869,13 @@
             wC.innerHTML = MESAI_GUNLERI.length === 0 ? "<span class='text-gray-400 text-xs italic'>Kayıt yok</span>" : 
                 MESAI_GUNLERI.map(t => `<span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">${new Date(t).toLocaleDateString('tr-TR')} <button onclick="window.kuralSil('calisma','${t}')" class="text-green-600 font-bold ml-1">×</button></span>`).join('');
         }
-
         window.kuralEkle = async function(tip) {
             const tarih = document.getElementById("newHolidayDate").value;
             if (!tarih) { alert("Tarih seçin!"); return; }
-            if (tip === 'tatil') {
-                if (TATIL_GUNLERI.includes(tarih)) return;
-                await firebaseKaydet("tatil_gunleri", tarih, { tarih });
-            } else {
-                if (MESAI_GUNLERI.includes(tarih)) return;
-                await firebaseKaydet("mesai_gunleri", tarih, { tarih });
-            }
+            if (tip === 'tatil') { if (TATIL_GUNLERI.includes(tarih)) return; await firebaseKaydet("tatil_gunleri", tarih, { tarih }); }
+            else { if (MESAI_GUNLERI.includes(tarih)) return; await firebaseKaydet("mesai_gunleri", tarih, { tarih }); }
             document.getElementById("newHolidayDate").value = "";
         }
-
         window.kuralSil = async function(tip, tarih) {
             if (tip === 'tatil') await firebaseSil("tatil_gunleri", tarih);
             else await firebaseSil("mesai_gunleri", tarih);
@@ -1737,31 +1888,11 @@
             const goz = parseInt(document.getElementById("newProductGoz").value);
             const cevirim = parseFloat(document.getElementById("newProductCevrim").value);
             const hammadde = document.getElementById("newProductHammadde").value;
-            
-            if (!code || !name) { 
-                alert("❌ Ürün kodu ve ürün adı zorunludur!"); 
-                return; 
-            }
-            
-            if (!gramaj || !goz || !cevirim || !hammadde) {
-                const devam = confirm("⚠️ Hedef değerler eksik!\n\nYine de kaydetmek istiyor musunuz?");
-                if (!devam) return;
-            }
-            
-            const urunData = { 
-                urunKodu: code, 
-                ad: name,
-                hedefBaskiGramaji: gramaj || 0,
-                hedefKalipGozSayisi: goz || 0,
-                hedefCevrimSuresi: cevirim || 0,
-                hedefHammadde: hammadde || "",
-                updatedAt: new Date().toISOString()
-            };
-            
+            if (!code || !name) { alert("❌ Ürün kodu ve ürün adı zorunludur!"); return; }
+            if (!gramaj || !goz || !cevirim || !hammadde) { if (!confirm("⚠️ Hedef değerler eksik!\n\nYine de kaydetmek istiyor musunuz?")) return; }
+            const urunData = { urunKodu: code, ad: name, hedefBaskiGramaji: gramaj || 0, hedefKalipGozSayisi: goz || 0, hedefCevrimSuresi: cevirim || 0, hedefHammadde: hammadde || "", updatedAt: new Date().toISOString() };
             await firebaseKaydet("urunler", code, urunData);
-            
-            alert(`✅ Ürün "${code}" başarıyla eklendi!\n\n GitHub'a resim ekleyin: ${code}.jpg`);
-            
+            alert(`✅ Ürün "${code}" başarıyla eklendi!`);
             document.getElementById("newProductCode").value = "";
             document.getElementById("newProductName").value = "";
             document.getElementById("newProductGramaj").value = "";
@@ -1770,30 +1901,13 @@
             document.getElementById("newProductHammadde").value = "";
         };
 
-        // ========== RAPORLAMA FONKSİYONLARI ==========
-
+        // ========== RAPORLAMA ==========
         window.generateMachinePerformanceReport = function() {
             const container = document.getElementById('machinePerformanceCards');
             if (!container) return;
-            
             container.innerHTML = '';
-            
             const machineStats = {};
-            MAKINALAR.forEach(m => {
-                machineStats[m.kod] = {
-                    kod: m.kod,
-                    ad: m.ad,
-                    toplamBaski: 0,
-                    toplamUrun: 0,
-                    toplamGramaj: 0,
-                    toplamSure: 0,
-                    teorikSureToplam: 0,
-                    isSayisi: 0,
-                    bitmisIsSayisi: 0,
-                    hammaddeStats: {}
-                };
-            });
-            
+            MAKINALAR.forEach(m => { machineStats[m.kod] = { kod: m.kod, ad: m.ad, toplamBaski: 0, toplamUrun: 0, toplamGramaj: 0, toplamSure: 0, teorikSureToplam: 0, isSayisi: 0, bitmisIsSayisi: 0, hammaddeStats: {} }; });
             dbMock.forEach(k => {
                 if (machineStats[k.makine]) {
                     const stat = machineStats[k.makine];
@@ -1802,134 +1916,29 @@
                     const gramaj = (k.baskiGramaji || 0) * (k.toplamBaski || 0);
                     stat.toplamGramaj += gramaj;
                     stat.isSayisi++;
-                    
                     if (k.hammadde) {
-                        if (!stat.hammaddeStats[k.hammadde]) {
-                            stat.hammaddeStats[k.hammadde] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 };
-                        }
+                        if (!stat.hammaddeStats[k.hammadde]) stat.hammaddeStats[k.hammadde] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 };
                         stat.hammaddeStats[k.hammadde].toplamGramaj += gramaj;
                         stat.hammaddeStats[k.hammadde].isSayisi++;
                         stat.hammaddeStats[k.hammadde].urunSayisi += k.toplamUrunSayisi || 0;
                     }
-                    
-                    if (k.rawBitis) {
-                        stat.bitmisIsSayisi++;
-                        stat.toplamSure += k.netCalismaDk || 0;
-                        stat.teorikSureToplam += k.teorikSureDk || 0;
-                    }
+                    if (k.rawBitis) { stat.bitmisIsSayisi++; stat.toplamSure += k.netCalismaDk || 0; stat.teorikSureToplam += k.teorikSureDk || 0; }
                 }
             });
-            
             Object.values(machineStats).forEach(stat => {
-                const verimlilik = stat.teorikSureToplam > 0 
-                    ? ((stat.teorikSureToplam / stat.toplamSure) * 100).toFixed(1) 
-                    : 0;
-                
-                const bosdaKalmaOrani = stat.toplamSure > 0 
-                    ? (((stat.toplamSure - stat.teorikSureToplam) / stat.toplamSure) * 100).toFixed(1) 
-                    : 0;
-                
-                const sapma = stat.toplamSure > 0 
-                    ? stat.toplamSure - stat.teorikSureToplam 
-                    : 0;
-                
+                const verimlilik = stat.teorikSureToplam > 0 ? ((stat.teorikSureToplam / stat.toplamSure) * 100).toFixed(1) : 0;
+                const bosdaKalmaOrani = stat.toplamSure > 0 ? (((stat.toplamSure - stat.teorikSureToplam) / stat.toplamSure) * 100).toFixed(1) : 0;
+                const sapma = stat.toplamSure > 0 ? stat.toplamSure - stat.teorikSureToplam : 0;
                 const verimlilikRenk = verimlilik >= 90 ? 'text-green-600' : verimlilik >= 70 ? 'text-yellow-600' : 'text-red-600';
                 const sapmaIcon = sapma > 0 ? '⚠️' : sapma < 0 ? '✅' : '✓';
                 const sapmaRenk = sapma > 0 ? 'text-red-600' : sapma < 0 ? 'text-green-600' : 'text-gray-600';
-                
-                const hammaddeListesi = Object.keys(stat.hammaddeStats)
-                    .map(kod => ({
-                        kod: kod,
-                        tamAd: HAMMADDE_ADLARI[kod] || kod,
-                        ...stat.hammaddeStats[kod],
-                        yuzde: stat.toplamGramaj > 0 ? (stat.hammaddeStats[kod].toplamGramaj / stat.toplamGramaj * 100) : 0
-                    }))
-                    .sort((a, b) => b.toplamGramaj - a.toplamGramaj);
-                
+                const hammaddeListesi = Object.keys(stat.hammaddeStats).map(kod => ({ kod: kod, tamAd: HAMMADDELER[kod] || kod, ...stat.hammaddeStats[kod], yuzde: stat.toplamGramaj > 0 ? (stat.hammaddeStats[kod].toplamGramaj / stat.toplamGramaj * 100) : 0 })).sort((a, b) => b.toplamGramaj - a.toplamGramaj);
                 let hammaddeHtml = '';
-                if (hammaddeListesi.length === 0) {
-                    hammaddeHtml = `<div class="text-center text-gray-400 py-2 text-xs">Henüz hammadde verisi yok</div>`;
-                } else {
-                    hammaddeListesi.forEach(hm => {
-                        const renk = HAMMADDE_RENKLER[hm.kod] || { bg: 'bg-gray-500', light: 'bg-gray-100', text: 'text-gray-700' };
-                        hammaddeHtml += `
-                            <div class="mb-2">
-                                <div class="flex justify-between items-center mb-0.5">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="inline-block w-2.5 h-2.5 rounded ${renk.bg}"></span>
-                                        <span class="font-bold text-xs text-gray-800">${hm.kod}</span>
-                                        <span class="text-[10px] text-gray-500">(${hm.tamAd})</span>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="font-bold text-xs ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span>
-                                        <span class="text-[10px] text-gray-500 ml-1">${hm.yuzde.toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <div class="w-full ${renk.light} rounded-full h-2 overflow-hidden">
-                                    <div class="${renk.bg} h-2 rounded-full" style="width: ${hm.yuzde}%"></div>
-                                </div>
-                                <div class="flex justify-between text-[9px] text-gray-500 mt-0.5">
-                                    <span>${hm.isSayisi} iş</span>
-                                    <span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-                
+                if (hammaddeListesi.length === 0) { hammaddeHtml = `<div class="text-center text-gray-400 py-2 text-xs">Henüz hammadde verisi yok</div>`; }
+                else { hammaddeListesi.forEach(hm => { const renk = getHammaddeRenk(hm.kod); hammaddeHtml += `<div class="mb-2"><div class="flex justify-between items-center mb-0.5"><div class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded ${renk.bg}"></span><span class="font-bold text-xs text-gray-800">${hm.kod}</span><span class="text-[10px] text-gray-500">(${hm.tamAd})</span></div><div class="text-right"><span class="font-bold text-xs ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span><span class="text-[10px] text-gray-500 ml-1">${hm.yuzde.toFixed(1)}%</span></div></div><div class="w-full ${renk.light} rounded-full h-2 overflow-hidden"><div class="${renk.bg} h-2 rounded-full" style="width: ${hm.yuzde}%"></div></div><div class="flex justify-between text-[9px] text-gray-500 mt-0.5"><span>${hm.isSayisi} iş</span><span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span></div></div>`; }); }
                 const card = document.createElement('div');
                 card.className = 'bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200';
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h4 class="font-bold text-blue-900 text-lg">${stat.ad}</h4>
-                            <p class="text-xs text-blue-600">${stat.isSayisi} iş (${stat.bitmisIsSayisi} tamamlandı)</p>
-                        </div>
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono font-bold text-sm">M-${stat.kod}</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
-                        <div class="bg-white p-2 rounded">
-                            <div class="text-gray-500">Toplam Baskı</div>
-                            <div class="font-bold text-gray-800">${stat.toplamBaski.toLocaleString('tr-TR')}</div>
-                        </div>
-                        <div class="bg-white p-2 rounded">
-                            <div class="text-gray-500">Toplam Ürün</div>
-                            <div class="font-bold text-purple-700">${stat.toplamUrun.toLocaleString('tr-TR')}</div>
-                        </div>
-                        <div class="bg-white p-2 rounded">
-                            <div class="text-gray-500">Toplam Gramaj</div>
-                            <div class="font-bold text-orange-700">${gramajFormatla(stat.toplamGramaj)}</div>
-                        </div>
-                        <div class="bg-white p-2 rounded">
-                            <div class="text-gray-500">Toplam Süre</div>
-                            <div class="font-bold text-green-700">${formatDakikaSaat(stat.toplamSure)}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="border-t border-blue-200 pt-3 space-y-2 mb-3">
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-gray-600">Verimlilik:</span>
-                            <span class="font-bold ${verimlilikRenk}">${verimlilik}%</span>
-                        </div>
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-gray-600">Boşta Kalma:</span>
-                            <span class="font-bold ${bosdaKalmaOrani > 20 ? 'text-red-600' : 'text-green-600'}">${bosdaKalmaOrani}%</span>
-                        </div>
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-gray-600">Süre Sapması:</span>
-                            <span class="font-bold ${sapmaRenk}">${sapmaIcon} ${formatDakikaSaat(Math.abs(sapma))}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="border-t border-blue-200 pt-3">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-gray-700">🧪 Hammadde Dağılımı</span>
-                            <span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">${hammaddeListesi.length} cins</span>
-                        </div>
-                        ${hammaddeHtml}
-                    </div>
-                `;
+                card.innerHTML = `<div class="flex justify-between items-start mb-3"><div><h4 class="font-bold text-blue-900 text-lg">${stat.ad}</h4><p class="text-xs text-blue-600">${stat.isSayisi} iş (${stat.bitmisIsSayisi} tamamlandı)</p></div><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono font-bold text-sm">M-${stat.kod}</span></div><div class="grid grid-cols-2 gap-2 mb-3 text-xs"><div class="bg-white p-2 rounded"><div class="text-gray-500">Toplam Baskı</div><div class="font-bold text-gray-800">${stat.toplamBaski.toLocaleString('tr-TR')}</div></div><div class="bg-white p-2 rounded"><div class="text-gray-500">Toplam Ürün</div><div class="font-bold text-purple-700">${stat.toplamUrun.toLocaleString('tr-TR')}</div></div><div class="bg-white p-2 rounded"><div class="text-gray-500">Toplam Gramaj</div><div class="font-bold text-orange-700">${gramajFormatla(stat.toplamGramaj)}</div></div><div class="bg-white p-2 rounded"><div class="text-gray-500">Toplam Süre</div><div class="font-bold text-green-700">${formatDakikaSaat(stat.toplamSure)}</div></div></div><div class="border-t border-blue-200 pt-3 space-y-2 mb-3"><div class="flex justify-between items-center text-xs"><span class="text-gray-600">Verimlilik:</span><span class="font-bold ${verimlilikRenk}">${verimlilik}%</span></div><div class="flex justify-between items-center text-xs"><span class="text-gray-600">Boşta Kalma:</span><span class="font-bold ${bosdaKalmaOrani > 20 ? 'text-red-600' : 'text-green-600'}">${bosdaKalmaOrani}%</span></div><div class="flex justify-between items-center text-xs"><span class="text-gray-600">Süre Sapması:</span><span class="font-bold ${sapmaRenk}">${sapmaIcon} ${formatDakikaSaat(Math.abs(sapma))}</span></div></div><div class="border-t border-blue-200 pt-3"><div class="flex justify-between items-center mb-2"><span class="text-xs font-bold text-gray-700">🧪 Hammadde Dağılımı</span><span class="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">${hammaddeListesi.length} cins</span></div>${hammaddeHtml}</div>`;
                 container.appendChild(card);
             });
         };
@@ -1937,16 +1946,11 @@
         window.populateWorkerReportDropdown = function() {
             const select = document.getElementById('reportWorkerSelect');
             if (!select) return;
-            
             select.innerHTML = '<option value="">Seçiniz...</option>';
-            
-            const workers = Object.keys(USERS).filter(u => USERS[u].role === 'worker');
-            
-            workers.forEach(username => {
+            Object.keys(USERS).filter(u => USERS[u].role === 'worker').forEach(username => {
                 const user = USERS[username];
                 const option = document.createElement('option');
-                option.value = username;
-                option.innerText = `${user.name} (${username})`;
+                option.value = username; option.innerText = `${user.name} (${username})`;
                 select.appendChild(option);
             });
         };
@@ -1955,274 +1959,49 @@
             const username = document.getElementById('reportWorkerSelect').value;
             const container = document.getElementById('workerReportContent');
             if (!container) return;
-            
-            if (!username) {
-                container.classList.add('hidden');
-                return;
-            }
-            
+            if (!username) { container.classList.add('hidden'); return; }
             const user = USERS[username];
             const userJobs = dbMock.filter(k => k.username === username || k.ekleyen === user.name);
             const bitmisJobs = userJobs.filter(k => k.rawBitis);
-            
             const toplamCalismaSuresi = bitmisJobs.reduce((sum, k) => sum + (k.netCalismaDk || 0), 0);
             const toplamBostaSuresi = bitmisJobs.reduce((sum, k) => sum + (k.bostaZamanDk || 0), 0);
             const toplamUrun = bitmisJobs.reduce((sum, k) => sum + (k.toplamUrunSayisi || 0), 0);
             const toplamBaski = bitmisJobs.reduce((sum, k) => sum + (k.toplamBaski || 0), 0);
             const toplamGramaj = bitmisJobs.reduce((sum, k) => sum + ((k.baskiGramaji || 0) * (k.toplamBaski || 0)), 0);
             const teorikSureToplam = bitmisJobs.reduce((sum, k) => sum + (k.teorikSureDk || 0), 0);
-            
-            const verimlilik = teorikSureToplam > 0 
-                ? ((teorikSureToplam / toplamCalismaSuresi) * 100).toFixed(1) 
-                : 0;
-            
-            const bosdaOrani = toplamCalismaSuresi > 0 
-                ? ((toplamBostaSuresi / toplamCalismaSuresi) * 100).toFixed(1) 
-                : 0;
-            
+            const verimlilik = teorikSureToplam > 0 ? ((teorikSureToplam / toplamCalismaSuresi) * 100).toFixed(1) : 0;
+            const bosdaOrani = toplamCalismaSuresi > 0 ? ((toplamBostaSuresi / toplamCalismaSuresi) * 100).toFixed(1) : 0;
             const hammaddeStats = {};
-            bitmisJobs.forEach(k => {
-                const hm = k.hammadde;
-                if (!hm) return;
-                const gramaj = (k.baskiGramaji || 0) * (k.toplamBaski || 0);
-                if (!hammaddeStats[hm]) {
-                    hammaddeStats[hm] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 };
-                }
-                hammaddeStats[hm].toplamGramaj += gramaj;
-                hammaddeStats[hm].isSayisi++;
-                hammaddeStats[hm].urunSayisi += k.toplamUrunSayisi || 0;
-            });
-            
-            const hammaddeListesi = Object.keys(hammaddeStats)
-                .map(kod => ({
-                    kod: kod,
-                    tamAd: HAMMADDE_ADLARI[kod] || kod,
-                    ...hammaddeStats[kod],
-                    yuzde: toplamGramaj > 0 ? (hammaddeStats[kod].toplamGramaj / toplamGramaj * 100) : 0
-                }))
-                .sort((a, b) => b.toplamGramaj - a.toplamGramaj);
-            
+            bitmisJobs.forEach(k => { const hm = k.hammadde; if (!hm) return; const gramaj = (k.baskiGramaji || 0) * (k.toplamBaski || 0); if (!hammaddeStats[hm]) hammaddeStats[hm] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 }; hammaddeStats[hm].toplamGramaj += gramaj; hammaddeStats[hm].isSayisi++; hammaddeStats[hm].urunSayisi += k.toplamUrunSayisi || 0; });
+            const hammaddeListesi = Object.keys(hammaddeStats).map(kod => ({ kod: kod, tamAd: HAMMADDELER[kod] || kod, ...hammaddeStats[kod], yuzde: toplamGramaj > 0 ? (hammaddeStats[kod].toplamGramaj / toplamGramaj * 100) : 0 })).sort((a, b) => b.toplamGramaj - a.toplamGramaj);
             let hammaddeDetayHtml = '';
-            if (hammaddeListesi.length === 0) {
-                hammaddeDetayHtml = `<div class="text-center text-gray-400 py-6 text-sm">Henüz hammadde verisi yok</div>`;
-            } else {
-                hammaddeListesi.forEach(hm => {
-                    const renk = HAMMADDE_RENKLER[hm.kod] || { bg: 'bg-gray-500', light: 'bg-gray-100', text: 'text-gray-700' };
-                    hammaddeDetayHtml += `
-                        <div class="mb-3">
-                            <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-block w-3 h-3 rounded ${renk.bg}"></span>
-                                    <span class="font-bold text-sm text-gray-800">${hm.kod}</span>
-                                    <span class="text-xs text-gray-500">(${hm.tamAd})</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-bold text-sm ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span>
-                                    <span class="text-xs text-gray-500 ml-2">${hm.yuzde.toFixed(1)}%</span>
-                                </div>
-                            </div>
-                            <div class="w-full ${renk.light} rounded-full h-3 overflow-hidden">
-                                <div class="${renk.bg} h-3 rounded-full transition-all" style="width: ${hm.yuzde}%"></div>
-                            </div>
-                            <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
-                                <span>${hm.isSayisi} iş</span>
-                                <span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-            
+            if (hammaddeListesi.length === 0) { hammaddeDetayHtml = `<div class="text-center text-gray-400 py-6 text-sm">Henüz hammadde verisi yok</div>`; }
+            else { hammaddeListesi.forEach(hm => { const renk = getHammaddeRenk(hm.kod); hammaddeDetayHtml += `<div class="mb-3"><div class="flex justify-between items-center mb-1"><div class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded ${renk.bg}"></span><span class="font-bold text-sm text-gray-800">${hm.kod}</span><span class="text-xs text-gray-500">(${hm.tamAd})</span></div><div class="text-right"><span class="font-bold text-sm ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span><span class="text-xs text-gray-500 ml-2">${hm.yuzde.toFixed(1)}%</span></div></div><div class="w-full ${renk.light} rounded-full h-3 overflow-hidden"><div class="${renk.bg} h-3 rounded-full" style="width: ${hm.yuzde}%"></div></div><div class="flex justify-between text-[10px] text-gray-500 mt-0.5"><span>${hm.isSayisi} iş</span><span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span></div></div>`; }); }
             container.classList.remove('hidden');
-            container.innerHTML = `
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h4 class="font-bold text-purple-900 text-xl">${user.name}</h4>
-                            <p class="text-xs text-purple-600">${userJobs.length} iş (${bitmisJobs.length} tamamlandı)</p>
-                        </div>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded font-semibold text-sm">WORKER</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                        <div class="bg-white p-3 rounded-lg">
-                            <div class="text-xs text-gray-500 mb-1">Toplam Çalışma</div>
-                            <div class="font-bold text-green-700 text-lg">${formatDakikaSaat(toplamCalismaSuresi)}</div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg">
-                            <div class="text-xs text-gray-500 mb-1">Boşta Süre</div>
-                            <div class="font-bold text-red-600 text-lg">${formatDakikaSaat(toplamBostaSuresi)}</div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg">
-                            <div class="text-xs text-gray-500 mb-1">Toplam Ürün</div>
-                            <div class="font-bold text-purple-700 text-lg">${toplamUrun.toLocaleString('tr-TR')}</div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg">
-                            <div class="text-xs text-gray-500 mb-1">Toplam Gramaj</div>
-                            <div class="font-bold text-orange-700 text-lg">${gramajFormatla(toplamGramaj)}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-3 mb-4">
-                        <div class="bg-white p-3 rounded-lg text-center">
-                            <div class="text-xs text-gray-500 mb-1">Verimlilik</div>
-                            <div class="font-bold text-2xl ${verimlilik >= 90 ? 'text-green-600' : verimlilik >= 70 ? 'text-yellow-600' : 'text-red-600'}">${verimlilik}%</div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg text-center">
-                            <div class="text-xs text-gray-500 mb-1">Boşta Kalma</div>
-                            <div class="font-bold text-2xl ${bosdaOrani < 10 ? 'text-green-600' : bosdaOrani < 25 ? 'text-yellow-600' : 'text-red-600'}">${bosdaOrani}%</div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg text-center">
-                            <div class="text-xs text-gray-500 mb-1">İş/Baskı</div>
-                            <div class="font-bold text-2xl text-blue-600">${toplamBaski.toLocaleString('tr-TR')}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-4 rounded-xl border border-purple-100">
-                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-purple-100">
-                            <h5 class="font-bold text-gray-800">🧪 Hammadde Kullanımı</h5>
-                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${hammaddeListesi.length} farklı hammadde</span>
-                        </div>
-                        ${hammaddeDetayHtml}
-                    </div>
-                </div>
-            `;
+            container.innerHTML = `<div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200"><div class="flex justify-between items-start mb-4"><div><h4 class="font-bold text-purple-900 text-xl">${user.name}</h4><p class="text-xs text-purple-600">${userJobs.length} iş (${bitmisJobs.length} tamamlandı)</p></div><span class="bg-purple-100 text-purple-800 px-3 py-1 rounded font-semibold text-sm">WORKER</span></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4"><div class="bg-white p-3 rounded-lg"><div class="text-xs text-gray-500 mb-1">Toplam Çalışma</div><div class="font-bold text-green-700 text-lg">${formatDakikaSaat(toplamCalismaSuresi)}</div></div><div class="bg-white p-3 rounded-lg"><div class="text-xs text-gray-500 mb-1">Boşta Süre</div><div class="font-bold text-red-600 text-lg">${formatDakikaSaat(toplamBostaSuresi)}</div></div><div class="bg-white p-3 rounded-lg"><div class="text-xs text-gray-500 mb-1">Toplam Ürün</div><div class="font-bold text-purple-700 text-lg">${toplamUrun.toLocaleString('tr-TR')}</div></div><div class="bg-white p-3 rounded-lg"><div class="text-xs text-gray-500 mb-1">Toplam Gramaj</div><div class="font-bold text-orange-700 text-lg">${gramajFormatla(toplamGramaj)}</div></div></div><div class="grid grid-cols-3 gap-3 mb-4"><div class="bg-white p-3 rounded-lg text-center"><div class="text-xs text-gray-500 mb-1">Verimlilik</div><div class="font-bold text-2xl ${verimlilik >= 90 ? 'text-green-600' : verimlilik >= 70 ? 'text-yellow-600' : 'text-red-600'}">${verimlilik}%</div></div><div class="bg-white p-3 rounded-lg text-center"><div class="text-xs text-gray-500 mb-1">Boşta Kalma</div><div class="font-bold text-2xl ${bosdaOrani < 10 ? 'text-green-600' : bosdaOrani < 25 ? 'text-yellow-600' : 'text-red-600'}">${bosdaOrani}%</div></div><div class="bg-white p-3 rounded-lg text-center"><div class="text-xs text-gray-500 mb-1">İş/Baskı</div><div class="font-bold text-2xl text-blue-600">${toplamBaski.toLocaleString('tr-TR')}</div></div></div><div class="bg-white p-4 rounded-xl border border-purple-100"><div class="flex justify-between items-center mb-3 pb-2 border-b border-purple-100"><h5 class="font-bold text-gray-800">🧪 Hammadde Kullanımı</h5><span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${hammaddeListesi.length} farklı hammadde</span></div>${hammaddeDetayHtml}</div></div>`;
         };
 
         window.generateEfficiencyReport = function() {
             const container = document.getElementById('efficiencyReport');
             if (!container) return;
-            
             const bitmisIsler = dbMock.filter(k => k.rawBitis);
-            
             const toplamCalismaSuresi = bitmisIsler.reduce((sum, k) => sum + (k.netCalismaDk || 0), 0);
             const toplamTeorikSure = bitmisIsler.reduce((sum, k) => sum + (k.teorikSureDk || 0), 0);
             const toplamBostaSure = bitmisIsler.reduce((sum, k) => sum + (k.bostaZamanDk || 0), 0);
-            
-            const genelVerimlilik = toplamTeorikSure > 0 
-                ? ((toplamTeorikSure / toplamCalismaSuresi) * 100).toFixed(1) 
-                : 0;
-            
-            const genelBosdaOrani = toplamCalismaSuresi > 0 
-                ? ((toplamBostaSure / toplamCalismaSuresi) * 100).toFixed(1) 
-                : 0;
-            
+            const genelVerimlilik = toplamTeorikSure > 0 ? ((toplamTeorikSure / toplamCalismaSuresi) * 100).toFixed(1) : 0;
+            const genelBosdaOrani = toplamCalismaSuresi > 0 ? ((toplamBostaSure / toplamCalismaSuresi) * 100).toFixed(1) : 0;
             const aktifMakineler = new Set(dbMock.map(k => k.makine)).size;
-            const makineKullanimOrani = MAKINALAR.length > 0 
-                ? ((aktifMakineler / MAKINALAR.length) * 100).toFixed(1) 
-                : 0;
-            
-            const ortalamaIsSuresi = bitmisIsler.length > 0 
-                ? (toplamCalismaSuresi / bitmisIsler.length).toFixed(0) 
-                : 0;
-            
+            const makineKullanimOrani = MAKINALAR.length > 0 ? ((aktifMakineler / MAKINALAR.length) * 100).toFixed(1) : 0;
+            const ortalamaIsSuresi = bitmisIsler.length > 0 ? (toplamCalismaSuresi / bitmisIsler.length).toFixed(0) : 0;
             const toplamUretim = bitmisIsler.reduce((sum, k) => sum + (k.toplamUrunSayisi || 0), 0);
             const toplamHammadde = bitmisIsler.reduce((sum, k) => sum + ((k.baskiGramaji || 0) * (k.toplamBaski || 0)), 0);
-            
             const hammaddeStats = {};
-            bitmisIsler.forEach(k => {
-                const hm = k.hammadde;
-                if (!hm) return;
-                const gramaj = (k.baskiGramaji || 0) * (k.toplamBaski || 0);
-                if (!hammaddeStats[hm]) {
-                    hammaddeStats[hm] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 };
-                }
-                hammaddeStats[hm].toplamGramaj += gramaj;
-                hammaddeStats[hm].isSayisi++;
-                hammaddeStats[hm].urunSayisi += k.toplamUrunSayisi || 0;
-            });
-            
-            const hammaddeListesi = Object.keys(hammaddeStats)
-                .map(kod => ({
-                    kod: kod,
-                    tamAd: HAMMADDE_ADLARI[kod] || kod,
-                    ...hammaddeStats[kod],
-                    yuzde: toplamHammadde > 0 ? (hammaddeStats[kod].toplamGramaj / toplamHammadde * 100) : 0
-                }))
-                .sort((a, b) => b.toplamGramaj - a.toplamGramaj);
-            
+            bitmisIsler.forEach(k => { const hm = k.hammadde; if (!hm) return; const gramaj = (k.baskiGramaji || 0) * (k.toplamBaski || 0); if (!hammaddeStats[hm]) hammaddeStats[hm] = { toplamGramaj: 0, isSayisi: 0, urunSayisi: 0 }; hammaddeStats[hm].toplamGramaj += gramaj; hammaddeStats[hm].isSayisi++; hammaddeStats[hm].urunSayisi += k.toplamUrunSayisi || 0; });
+            const hammaddeListesi = Object.keys(hammaddeStats).map(kod => ({ kod: kod, tamAd: HAMMADDELER[kod] || kod, ...hammaddeStats[kod], yuzde: toplamHammadde > 0 ? (hammaddeStats[kod].toplamGramaj / toplamHammadde * 100) : 0 })).sort((a, b) => b.toplamGramaj - a.toplamGramaj);
             let hammaddeDetayHtml = '';
-            if (hammaddeListesi.length === 0) {
-                hammaddeDetayHtml = `<div class="text-center text-gray-400 py-6 text-sm">Henüz hammadde verisi yok</div>`;
-            } else {
-                hammaddeListesi.forEach(hm => {
-                    const renk = HAMMADDE_RENKLER[hm.kod] || { bg: 'bg-gray-500', light: 'bg-gray-100', text: 'text-gray-700' };
-                    hammaddeDetayHtml += `
-                        <div class="mb-3">
-                            <div class="flex justify-between items-center mb-1">
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-block w-3 h-3 rounded ${renk.bg}"></span>
-                                    <span class="font-bold text-sm text-gray-800">${hm.kod}</span>
-                                    <span class="text-xs text-gray-500">(${hm.tamAd})</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-bold text-sm ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span>
-                                    <span class="text-xs text-gray-500 ml-2">${hm.yuzde.toFixed(1)}%</span>
-                                </div>
-                            </div>
-                            <div class="w-full ${renk.light} rounded-full h-3 overflow-hidden">
-                                <div class="${renk.bg} h-3 rounded-full transition-all" style="width: ${hm.yuzde}%"></div>
-                            </div>
-                            <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
-                                <span>${hm.isSayisi} iş</span>
-                                <span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-            
-            container.innerHTML = `
-                <div class="md:col-span-3 bg-white p-5 rounded-xl border border-gray-200 mb-4">
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b">
-                        <h4 class="font-bold text-gray-800 text-lg">🧪 Hammadde Bazında Dağılım</h4>
-                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${hammaddeListesi.length} farklı hammadde</span>
-                    </div>
-                    ${hammaddeDetayHtml}
-                </div>
-                
-                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-xl border border-green-200 text-center">
-                    <div class="text-4xl mb-2">📊</div>
-                    <div class="text-sm text-gray-600 mb-1">Genel Verimlilik</div>
-                    <div class="text-4xl font-bold ${genelVerimlilik >= 90 ? 'text-green-600' : genelVerimlilik >= 70 ? 'text-yellow-600' : 'text-red-600'}">${genelVerimlilik}%</div>
-                    <div class="text-xs text-gray-500 mt-2">Planlanan/Gerçekleşen</div>
-                </div>
-                
-                <div class="bg-gradient-to-br from-red-50 to-orange-50 p-5 rounded-xl border border-red-200 text-center">
-                    <div class="text-4xl mb-2">️</div>
-                    <div class="text-sm text-gray-600 mb-1">Boşta Kalma Oranı</div>
-                    <div class="text-4xl font-bold ${genelBosdaOrani < 10 ? 'text-green-600' : genelBosdaOrani < 25 ? 'text-yellow-600' : 'text-red-600'}">${genelBosdaOrani}%</div>
-                    <div class="text-xs text-gray-500 mt-2">Toplam ${formatDakikaSaat(toplamBostaSure)}</div>
-                </div>
-                
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border border-blue-200 text-center">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-sm text-gray-600 mb-1">Makine Kullanımı</div>
-                    <div class="text-4xl font-bold text-blue-600">${makineKullanimOrani}%</div>
-                    <div class="text-xs text-gray-500 mt-2">${aktifMakineler}/${MAKINALAR.length} makine aktif</div>
-                </div>
-                
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 text-center">
-                    <div class="text-4xl mb-2">⚡</div>
-                    <div class="text-sm text-gray-600 mb-1">Ort. İş Süresi</div>
-                    <div class="text-4xl font-bold text-purple-600">${formatDakikaSaat(ortalamaIsSuresi)}</div>
-                    <div class="text-xs text-gray-500 mt-2">${bitmisIsler.length} iş tamamlandı</div>
-                </div>
-                
-                <div class="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border border-orange-200 text-center">
-                    <div class="text-4xl mb-2">📦</div>
-                    <div class="text-sm text-gray-600 mb-1">Toplam Üretim</div>
-                    <div class="text-3xl font-bold text-purple-700">${toplamUretim.toLocaleString('tr-TR')}</div>
-                    <div class="text-xs text-gray-500 mt-2">ürün</div>
-                </div>
-                
-                <div class="bg-gradient-to-br from-teal-50 to-cyan-50 p-5 rounded-xl border border-teal-200 text-center">
-                    <div class="text-4xl mb-2">⚖️</div>
-                    <div class="text-sm text-gray-600 mb-1">Toplam Hammadde</div>
-                    <div class="text-3xl font-bold text-orange-700">${gramajFormatla(toplamHammadde)}</div>
-                    <div class="text-xs text-gray-500 mt-2">kullanıldı</div>
-                </div>
-            `;
+            if (hammaddeListesi.length === 0) { hammaddeDetayHtml = `<div class="text-center text-gray-400 py-6 text-sm">Henüz hammadde verisi yok</div>`; }
+            else { hammaddeListesi.forEach(hm => { const renk = getHammaddeRenk(hm.kod); hammaddeDetayHtml += `<div class="mb-3"><div class="flex justify-between items-center mb-1"><div class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded ${renk.bg}"></span><span class="font-bold text-sm text-gray-800">${hm.kod}</span><span class="text-xs text-gray-500">(${hm.tamAd})</span></div><div class="text-right"><span class="font-bold text-sm ${renk.text}">${gramajFormatla(hm.toplamGramaj)}</span><span class="text-xs text-gray-500 ml-2">${hm.yuzde.toFixed(1)}%</span></div></div><div class="w-full ${renk.light} rounded-full h-3 overflow-hidden"><div class="${renk.bg} h-3 rounded-full" style="width: ${hm.yuzde}%"></div></div><div class="flex justify-between text-[10px] text-gray-500 mt-0.5"><span>${hm.isSayisi} iş</span><span>${hm.urunSayisi.toLocaleString('tr-TR')} ürün</span></div></div>`; }); }
+            container.innerHTML = `<div class="md:col-span-3 bg-white p-5 rounded-xl border border-gray-200 mb-4"><div class="flex justify-between items-center mb-4 pb-3 border-b"><h4 class="font-bold text-gray-800 text-lg">🧪 Hammadde Bazında Dağılım</h4><span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${hammaddeListesi.length} farklı hammadde</span></div>${hammaddeDetayHtml}</div><div class="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-xl border border-green-200 text-center"><div class="text-4xl mb-2">📊</div><div class="text-sm text-gray-600 mb-1">Genel Verimlilik</div><div class="text-4xl font-bold ${genelVerimlilik >= 90 ? 'text-green-600' : genelVerimlilik >= 70 ? 'text-yellow-600' : 'text-red-600'}">${genelVerimlilik}%</div><div class="text-xs text-gray-500 mt-2">Planlanan/Gerçekleşen</div></div><div class="bg-gradient-to-br from-red-50 to-orange-50 p-5 rounded-xl border border-red-200 text-center"><div class="text-4xl mb-2">⏱️</div><div class="text-sm text-gray-600 mb-1">Boşta Kalma Oranı</div><div class="text-4xl font-bold ${genelBosdaOrani < 10 ? 'text-green-600' : genelBosdaOrani < 25 ? 'text-yellow-600' : 'text-red-600'}">${genelBosdaOrani}%</div><div class="text-xs text-gray-500 mt-2">Toplam ${formatDakikaSaat(toplamBostaSure)}</div></div><div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border border-blue-200 text-center"><div class="text-4xl mb-2">🏭</div><div class="text-sm text-gray-600 mb-1">Makine Kullanımı</div><div class="text-4xl font-bold text-blue-600">${makineKullanimOrani}%</div><div class="text-xs text-gray-500 mt-2">${aktifMakineler}/${MAKINALAR.length} makine aktif</div></div><div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 text-center"><div class="text-4xl mb-2">⚡</div><div class="text-sm text-gray-600 mb-1">Ort. İş Süresi</div><div class="text-4xl font-bold text-purple-600">${formatDakikaSaat(ortalamaIsSuresi)}</div><div class="text-xs text-gray-500 mt-2">${bitmisIsler.length} iş tamamlandı</div></div><div class="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border border-orange-200 text-center"><div class="text-4xl mb-2">📦</div><div class="text-sm text-gray-600 mb-1">Toplam Üretim</div><div class="text-3xl font-bold text-purple-700">${toplamUretim.toLocaleString('tr-TR')}</div><div class="text-xs text-gray-500 mt-2">ürün</div></div><div class="bg-gradient-to-br from-teal-50 to-cyan-50 p-5 rounded-xl border border-teal-200 text-center"><div class="text-4xl mb-2">⚖️</div><div class="text-sm text-gray-600 mb-1">Toplam Hammadde</div><div class="text-3xl font-bold text-orange-700">${gramajFormatla(toplamHammadde)}</div><div class="text-xs text-gray-500 mt-2">kullanıldı</div></div>`;
         };
     </script>
 </body>
